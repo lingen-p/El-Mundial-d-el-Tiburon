@@ -6,34 +6,10 @@
 <title>Pronostico Mundialista "El Tiburón" 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --verde: #00c853;
-  --verde-dark: #009624;
-  --azul: #0d47a1;
-  --azul-mid: #1565c0;
-  --azul-light: #1976d2;
-  --dorado: #ffd600;
-  --dorado-dark: #f9a825;
-  --rojo: #d50000;
-  --bg: #0a0e1a;
-  --bg2: #0f1525;
-  --bg3: #141c30;
-  --card: #1a2235;
-  --card2: #1f2940;
-  --border: rgba(255,255,255,0.08);
-  --text: #f0f4ff;
-  --text2: #8896b0;
-  --text3: #4a5568;
-}
+:root{--verde:#00c853;--verde-dark:#009624;--azul:#0d47a1;--azul-mid:#1565c0;--dorado:#ffd600;--dorado-dark:#f9a825;--rojo:#d50000;--bg:#0a0e1a;--bg2:#0f1525;--bg3:#141c30;--card:#1a2235;--card2:#1f2940;--border:rgba(255,255,255,0.08);--text:#f0f4ff;--text2:#8896b0;--text3:#4a5568}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
-
-/* FIELD PATTERN BG */
-body::before{content:'';position:fixed;inset:0;background:
-  repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,0.015) 60px,rgba(255,255,255,0.015) 61px),
-  repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.015) 60px,rgba(255,255,255,0.015) 61px);pointer-events:none;z-index:0}
-
-/* LOGIN */
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(255,255,255,0.015) 60px,rgba(255,255,255,0.015) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(255,255,255,0.015) 60px,rgba(255,255,255,0.015) 61px);pointer-events:none;z-index:0}
 #login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:100;background:radial-gradient(ellipse at center,#0d1f3c 0%,#050810 100%)}
 .login-box{width:100%;max-width:400px;padding:20px}
 .login-logo{text-align:center;margin-bottom:32px}
@@ -46,58 +22,40 @@ body::before{content:'';position:fixed;inset:0;background:
 .login-field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;letter-spacing:0.5px;text-transform:uppercase}
 .login-field input{width:100%;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:15px;color:var(--text);font-family:'Outfit',sans-serif;transition:border-color 0.2s}
 .login-field input:focus{outline:none;border-color:var(--dorado)}
-.login-btn{width:100%;padding:14px;background:var(--dorado);color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:8px;letter-spacing:0.5px;transition:background 0.2s,transform 0.1s}
+.login-btn{width:100%;padding:14px;background:var(--dorado);color:#000;border:none;border-radius:10px;font-size:16px;font-weight:700;font-family:'Outfit',sans-serif;cursor:pointer;margin-top:8px;letter-spacing:0.5px;transition:all 0.2s}
 .login-btn:hover{background:var(--dorado-dark)}
 .login-btn:active{transform:scale(0.98)}
 .login-error{color:#ff5252;font-size:13px;text-align:center;margin-top:10px;display:none}
 .login-hint{font-size:12px;color:var(--text3);text-align:center;margin-top:16px}
-
-/* MAIN APP */
 #main-app{display:none;min-height:100vh;position:relative;z-index:1}
-
-/* HEADER */
 .header{background:linear-gradient(135deg,#0a1628 0%,#0d2040 100%);border-bottom:2px solid var(--dorado);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:50}
 .header-brand{display:flex;align-items:center;gap:12px}
 .header-shark{font-size:28px}
 .header-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--dorado)}
 .header-sub{font-size:11px;color:var(--text2);margin-top:-2px}
-.header-user{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:13px;cursor:pointer}
+.header-user{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:13px}
 .avatar-sm{width:28px;height:28px;border-radius:50%;background:var(--azul-mid);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
 .logout-btn{background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;margin-left:4px;font-family:'Outfit',sans-serif}
 .logout-btn:hover{color:var(--rojo)}
-
-/* NAV */
 .nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;padding:0 16px;gap:2px;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
 .nav-btn{background:none;border:none;color:var(--text2);padding:14px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;font-family:'Outfit',sans-serif;display:flex;align-items:center;gap:6px;transition:color 0.2s}
 .nav-btn:hover{color:var(--text)}
 .nav-btn.active{color:var(--dorado);border-bottom-color:var(--dorado)}
-.nav-icon{font-size:16px}
-
-/* CONTENT */
 .content{padding:20px;max-width:900px;margin:0 auto}
 .section{display:none}
 .section.active{display:block}
-
-/* CARDS */
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
 .card-title{font-size:15px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--text)}
-.card-title .icon{font-size:18px}
-
-/* METRIC GRID */
 .metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-bottom:20px}
 .metric{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
 .metric-val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--dorado);line-height:1}
 .metric-label{font-size:11px;color:var(--text2);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
-
-/* TABLE */
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;padding:10px 12px;color:var(--text2);border-bottom:1px solid var(--border);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
 td{padding:12px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(255,255,255,0.02)}
-
-/* BADGES */
 .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.3px}
 .b-gold{background:rgba(255,214,0,0.15);color:var(--dorado);border:1px solid rgba(255,214,0,0.3)}
 .b-silver{background:rgba(180,180,180,0.15);color:#ccc;border:1px solid rgba(180,180,180,0.3)}
@@ -107,42 +65,39 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .b-red{background:rgba(213,0,0,0.15);color:#ff5252;border:1px solid rgba(213,0,0,0.3)}
 .b-gray{background:rgba(255,255,255,0.08);color:var(--text2);border:1px solid var(--border)}
 .b-orange{background:rgba(255,152,0,0.15);color:#ffb74d;border:1px solid rgba(255,152,0,0.3)}
-
-/* AVATAR */
 .avatar{width:32px;height:32px;border-radius:50%;background:var(--azul-mid);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
-
-/* MATCH CARD */
-.match-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
-.match-teams{flex:1}
-.match-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.match-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.match-teams{flex:1;min-width:200px}
+.match-name{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .match-vs{color:var(--text3);font-size:12px;font-weight:400}
-.match-score{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--dorado);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:4px 14px;min-width:70px;text-align:center}
 .match-meta{font-size:11px;color:var(--text2);margin-top:3px}
-
-/* BUTTONS */
 .btn{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--card2);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.2s}
 .btn:hover{background:var(--card);border-color:rgba(255,255,255,0.15)}
 .btn-primary{background:var(--dorado);color:#000;border-color:var(--dorado);font-weight:700}
 .btn-primary:hover{background:var(--dorado-dark)}
-.btn-danger{background:rgba(213,0,0,0.2);color:#ff5252;border-color:rgba(213,0,0,0.3)}
 .btn-success{background:rgba(0,200,83,0.15);color:var(--verde);border-color:rgba(0,200,83,0.3)}
-
-/* FORM */
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
 .form-group{display:flex;flex-direction:column;gap:6px}
 .form-group label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px}
 .form-group input,.form-group select,.form-group textarea{padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif;transition:border-color 0.2s}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--dorado)}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--dorado)}
 .form-group select option{background:var(--bg2)}
-
-/* SCORE INPUT */
-.score-input{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:16px}
-.score-team{flex:1;text-align:center;font-size:14px;font-weight:600}
-.score-flag{font-size:28px;display:block;margin-bottom:4px}
-.score-num{width:60px;text-align:center;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--dorado);font-family:'Bebas Neue',sans-serif}
-.score-dash{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text3)}
-
-/* CHAT */
+.prono-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.prono-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.prono-match{font-size:14px;font-weight:600}
+.prono-deadline{font-size:11px;color:var(--text2)}
+.prono-deadline.urgent{color:#ff5252}
+.prono-score-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.prono-team{flex:1;text-align:center;font-size:13px;font-weight:500;min-width:80px}
+.prono-flag{font-size:24px;display:block;margin-bottom:4px}
+.prono-input{width:56px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--dorado);-moz-appearance:textfield}
+.prono-input::-webkit-outer-spin-button,.prono-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.prono-input:focus{outline:none;border-color:var(--dorado)}
+.prono-vs{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text3)}
+.points-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.point-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.point-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--dorado)}
+.point-label{font-size:11px;color:var(--text2);margin-top:2px}
 .chat-messages{min-height:300px;max-height:400px;overflow-y:auto;padding:8px 0;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 .chat-msg{display:flex;gap:10px;margin-bottom:16px;align-items:flex-start}
 .chat-msg.mine{flex-direction:row-reverse}
@@ -155,66 +110,29 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .chat-input-row input{flex:1;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif}
 .chat-input-row input:focus{outline:none;border-color:var(--dorado)}
 .chat-send{width:44px;height:44px;background:var(--dorado);border:none;border-radius:10px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-
-/* CHAMPION */
-.champ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
-.champ-card{background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:16px 10px;text-align:center;cursor:pointer;transition:all 0.2s}
+.champ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.champ-card{background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s}
 .champ-card:hover{border-color:rgba(255,214,0,0.3);background:var(--card)}
 .champ-card.selected{border-color:var(--dorado);background:rgba(255,214,0,0.08)}
-.champ-flag{font-size:32px;margin-bottom:8px;display:block}
+.champ-flag{font-size:28px;margin-bottom:6px;display:block}
 .champ-name{font-size:12px;font-weight:600;color:var(--text)}
-.champ-votes{font-size:11px;color:var(--text2);margin-top:3px}
-
-/* ADMIN PANEL */
+.champ-votes{font-size:11px;color:var(--text2);margin-top:2px}
 .admin-badge{background:rgba(213,0,0,0.2);color:#ff5252;border:1px solid rgba(213,0,0,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-
-/* TABS */
 .tab-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .tab{padding:7px 16px;border-radius:8px;border:1px solid var(--border);font-size:13px;cursor:pointer;background:var(--card2);color:var(--text2);font-family:'Outfit',sans-serif;font-weight:500;transition:all 0.2s}
 .tab.active{background:var(--dorado);color:#000;border-color:var(--dorado);font-weight:700}
-
-/* PRONOSTICO CARD */
-.prono-card{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
-.prono-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.prono-match{font-size:14px;font-weight:600}
-.prono-deadline{font-size:11px;color:var(--text2)}
-.prono-deadline.urgent{color:#ff5252}
-.prono-score-row{display:flex;align-items:center;gap:10px}
-.prono-team{flex:1;text-align:center;font-size:13px;font-weight:500}
-.prono-flag{font-size:24px;display:block;margin-bottom:4px}
-.prono-input{width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--dorado)}
-.prono-input:focus{outline:none;border-color:var(--dorado)}
-.prono-vs{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text3)}
-
-/* POINTS SYSTEM */
-.points-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
-.point-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center}
-.point-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--dorado)}
-.point-label{font-size:11px;color:var(--text2);margin-top:2px}
-
-/* DIVIDER */
 .divider{height:1px;background:var(--border);margin:16px 0}
-
-/* EMPTY STATE */
 .empty{text-align:center;padding:40px 20px;color:var(--text2)}
 .empty-icon{font-size:40px;margin-bottom:12px}
 .empty p{font-size:14px}
-
-/* TOAST */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--verde-dark);color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;z-index:999;transition:transform 0.3s;pointer-events:none}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--verde-dark);color:#fff;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;z-index:999;transition:transform 0.3s;pointer-events:none;white-space:nowrap}
 #toast.show{transform:translateX(-50%) translateY(0)}
-
-/* LOADING */
 #loading{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:16px}
 .loading-shark{font-size:48px;animation:float 1.5s ease-in-out infinite}
 .loading-text{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--dorado)}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-  .form-row{grid-template-columns:1fr}
-  .header-title{font-size:18px}
-  .metric-val{font-size:24px}
-}
+.grupo-tag{display:inline-block;background:rgba(255,214,0,0.1);color:var(--dorado);border:1px solid rgba(255,214,0,0.2);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;margin-left:6px}
+.puntos-fase{display:inline-block;background:rgba(0,200,83,0.1);color:var(--verde);border:1px solid rgba(0,200,83,0.2);border-radius:6px;padding:2px 8px;font-size:10px;font-weight:700;margin-left:6px}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}.header-title{font-size:18px}.metric-val{font-size:24px}.prono-score-row{justify-content:center}}
 </style>
 </head>
 <body>
@@ -264,18 +182,17 @@ tr:hover td{background:rgba(255,255,255,0.02)}
   </div>
 
   <div class="nav">
-    <button class="nav-btn active" data-section="dashboard"><span class="nav-icon">🏠</span>Inicio</button>
-    <button class="nav-btn" data-section="pronosticar"><span class="nav-icon">⚽</span>Pronosticar</button>
-    <button class="nav-btn" data-section="posiciones"><span class="nav-icon">🏆</span>Posiciones</button>
-    <button class="nav-btn" data-section="resultados"><span class="nav-icon">📋</span>Resultados</button>
-    <button class="nav-btn" data-section="campeon"><span class="nav-icon">⭐</span>Campeón</button>
-    <button class="nav-btn" data-section="chat"><span class="nav-icon">💬</span>Chat</button>
-    <button class="nav-btn" data-section="admin" id="admin-nav" style="display:none"><span class="nav-icon">🔧</span>Admin</button>
+    <button class="nav-btn active" data-section="dashboard">🏠 Inicio</button>
+    <button class="nav-btn" data-section="pronosticar">⚽ Pronosticar</button>
+    <button class="nav-btn" data-section="posiciones">🏆 Posiciones</button>
+    <button class="nav-btn" data-section="resultados">📋 Resultados</button>
+    <button class="nav-btn" data-section="campeon">⭐ Campeón</button>
+    <button class="nav-btn" data-section="chat">💬 Chat</button>
+    <button class="nav-btn" data-section="admin" id="admin-nav" style="display:none">🔧 Admin</button>
   </div>
 
   <div class="content">
 
-    <!-- DASHBOARD -->
     <div class="section active" id="dashboard">
       <div class="metric-grid">
         <div class="metric"><div class="metric-val" id="m-jugadores">—</div><div class="metric-label">Jugadores</div></div>
@@ -284,63 +201,64 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         <div class="metric"><div class="metric-val" id="m-mis-pts">0</div><div class="metric-label">Mis puntos</div></div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon">🔥</span>Top 5 del momento</div>
+        <div class="card-title">🔥 Top 5 del momento</div>
         <div id="top5-list"><div class="empty"><div class="empty-icon">⏳</div><p>Cargando clasificación...</p></div></div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon">📅</span>Próximos partidos</div>
-        <div id="proximos-list"><div class="empty"><div class="empty-icon">📅</div><p>No hay partidos próximos cargados aún</p></div></div>
+        <div class="card-title">📅 Próximos partidos</div>
+        <div id="proximos-list"><div class="empty"><div class="empty-icon">📅</div><p>Cargando partidos...</p></div></div>
       </div>
     </div>
 
-    <!-- PRONOSTICAR -->
     <div class="section" id="pronosticar">
       <div class="card">
-        <div class="card-title"><span class="icon">⚽</span>Mis pronósticos</div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Puedes pronosticar hasta <strong style="color:var(--dorado)">24 horas antes</strong> de cada partido. Una vez iniciado, tu pronóstico se hace público.</p>
-        <div id="pronosticos-lista"><div class="empty"><div class="empty-icon">⚽</div><p>No hay partidos disponibles para pronosticar</p></div></div>
+        <div class="card-title">⚽ Pronosticar partidos</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Tienes hasta <strong style="color:var(--dorado)">24 horas antes</strong> de cada partido para pronosticar.</p>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Tu pronóstico se hace público solo cuando el partido termina.</p>
+        <div id="pronosticos-lista"><div class="empty"><div class="empty-icon">⚽</div><p>Cargando partidos disponibles...</p></div></div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon">📊</span>Mis pronósticos guardados</div>
+        <div class="card-title">📊 Mis pronósticos guardados</div>
         <div id="mis-pronosticos-guardados"><div class="empty"><div class="empty-icon">📝</div><p>Aún no has ingresado pronósticos</p></div></div>
       </div>
     </div>
 
-    <!-- POSICIONES -->
     <div class="section" id="posiciones">
       <div class="card">
-        <div class="card-title"><span class="icon">🏆</span>Tabla general de posiciones</div>
+        <div class="card-title">🏆 Tabla general de posiciones</div>
         <div id="tabla-posiciones"><div class="empty"><div class="empty-icon">🏆</div><p>Cargando posiciones...</p></div></div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon">📌</span>Sistema de puntos</div>
+        <div class="card-title">📌 Sistema de puntos</div>
         <div class="points-info">
-          <div class="point-item"><div class="point-val">10</div><div class="point-label">Resultado exacto</div></div>
-          <div class="point-item"><div class="point-val">5</div><div class="point-label">Ganador correcto</div></div>
-          <div class="point-item"><div class="point-val">3</div><div class="point-label">Empate correcto</div></div>
-          <div class="point-item"><div class="point-val">25</div><div class="point-label">Campeón acertado</div></div>
+          <div class="point-item"><div class="point-val">10</div><div class="point-label">Resultado · Grupos</div></div>
+          <div class="point-item"><div class="point-val">10</div><div class="point-label">Marcador exacto · Grupos</div></div>
+          <div class="point-item"><div class="point-val">20</div><div class="point-label">Resultado · 16avos</div></div>
+          <div class="point-item"><div class="point-val">30</div><div class="point-label">Resultado · Octavos</div></div>
+          <div class="point-item"><div class="point-val">40</div><div class="point-label">Resultado · Cuartos</div></div>
+          <div class="point-item"><div class="point-val">50</div><div class="point-label">Resultado · Semis</div></div>
+          <div class="point-item"><div class="point-val">60</div><div class="point-label">Resultado · Final</div></div>
+          <div class="point-item"><div class="point-val">100</div><div class="point-label">Campeón acertado</div></div>
         </div>
       </div>
     </div>
 
-    <!-- RESULTADOS -->
     <div class="section" id="resultados">
       <div class="card">
-        <div class="card-title"><span class="icon">📋</span>Historial de partidos</div>
+        <div class="card-title">📋 Historial de partidos</div>
         <div class="tab-row">
           <button class="tab active" data-filter="todos">Todos</button>
           <button class="tab" data-filter="jugados">Jugados</button>
           <button class="tab" data-filter="proximos">Próximos</button>
         </div>
-        <div id="historial-lista"><div class="empty"><div class="empty-icon">📋</div><p>No hay partidos registrados aún</p></div></div>
+        <div id="historial-lista"><div class="empty"><div class="empty-icon">📋</div><p>Cargando partidos...</p></div></div>
       </div>
     </div>
 
-    <!-- CAMPEON -->
     <div class="section" id="campeon">
       <div class="card">
-        <div class="card-title"><span class="icon">⭐</span>¿Quién será el campeón del mundo?</div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Tu apuesta al campeón vale <strong style="color:var(--dorado)">25 puntos bonus</strong>. Solo puedes cambiarla antes del primer partido.</p>
+        <div class="card-title">⭐ ¿Quién será el campeón del mundo?</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Tu apuesta al campeón vale hasta <strong style="color:var(--dorado)">100 puntos bonus</strong>. Puedes cambiarla antes del primer partido (11 jun).</p>
         <div class="champ-grid" id="champ-grid"></div>
         <div style="margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-primary" id="save-champ-btn">⭐ Guardar mi apuesta</button>
@@ -348,16 +266,15 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         </div>
       </div>
       <div class="card">
-        <div class="card-title"><span class="icon">📊</span>Votos del grupo</div>
+        <div class="card-title">📊 Votos del grupo</div>
         <div id="votos-campeon"><div class="empty"><div class="empty-icon">⭐</div><p>Cargando votos...</p></div></div>
       </div>
     </div>
 
-    <!-- CHAT -->
     <div class="section" id="chat">
       <div class="card">
-        <div class="card-title"><span class="icon">💬</span>Chat "El Tiburón" 🦈</div>
-        <div class="chat-messages" id="chat-messages"></div>
+        <div class="card-title">💬 Chat "El Tiburón" 🦈</div>
+        <div class="chat-messages" id="chat-messages"><div class="empty"><div class="empty-icon">💬</div><p>Sé el primero en escribir algo 🦈</p></div></div>
         <div class="divider"></div>
         <div class="chat-input-row">
           <input type="text" id="chat-input" placeholder="Escribe algo... ⚽🦈" maxlength="300">
@@ -366,81 +283,32 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       </div>
     </div>
 
-    <!-- ADMIN -->
     <div class="section" id="admin">
       <div class="card">
-        <div class="card-title"><span class="icon">👥</span>Gestionar usuarios <span class="admin-badge">ADMIN</span></div>
-        <div style="margin-bottom:16px">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Nombre completo</label>
-              <input type="text" id="new-user-name" placeholder="Ej: Juan Pérez">
-            </div>
-            <div class="form-group">
-              <label>Correo electrónico</label>
-              <input type="email" id="new-user-email" placeholder="juan@correo.com">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Contraseña temporal</label>
-              <input type="text" id="new-user-pass" placeholder="Mínimo 6 caracteres">
-            </div>
-            <div class="form-group">
-              <label>Rol</label>
-              <select id="new-user-role">
-                <option value="user">Jugador</option>
-                <option value="admin">Admin</option>
-              </select>
-            </div>
-          </div>
-          <button class="btn btn-primary" id="create-user-btn">+ Crear usuario</button>
+        <div class="card-title">👥 Gestionar usuarios <span class="admin-badge">ADMIN</span></div>
+        <div class="form-row">
+          <div class="form-group"><label>Nombre completo</label><input type="text" id="new-user-name" placeholder="Juan Pérez"></div>
+          <div class="form-group"><label>Correo electrónico</label><input type="email" id="new-user-email" placeholder="juan@correo.com"></div>
         </div>
-        <div id="users-list"><div class="empty"><div class="empty-icon">👥</div><p>Cargando usuarios...</p></div></div>
+        <div class="form-row">
+          <div class="form-group"><label>Contraseña temporal</label><input type="text" id="new-user-pass" placeholder="Mínimo 6 caracteres"></div>
+          <div class="form-group"><label>Rol</label><select id="new-user-role"><option value="user">Jugador</option><option value="admin">Admin</option></select></div>
+        </div>
+        <button class="btn btn-primary" id="create-user-btn">+ Crear usuario</button>
+        <div style="margin-top:16px" id="users-list"><div class="empty"><div class="empty-icon">👥</div><p>Cargando usuarios...</p></div></div>
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="icon">⚽</span>Gestionar partidos <span class="admin-badge">ADMIN</span></div>
-        <div style="margin-bottom:16px">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Equipo 1 (con bandera)</label>
-              <input type="text" id="p-team1" placeholder="🇪🇨 Ecuador">
-            </div>
-            <div class="form-group">
-              <label>Equipo 2 (con bandera)</label>
-              <input type="text" id="p-team2" placeholder="🇲🇽 México">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Fecha y hora</label>
-              <input type="datetime-local" id="p-fecha">
-            </div>
-            <div class="form-group">
-              <label>Fase</label>
-              <select id="p-fase">
-                <option>Fase de grupos</option>
-                <option>Octavos de final</option>
-                <option>Cuartos de final</option>
-                <option>Semifinal</option>
-                <option>Final</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Grupo (si aplica)</label>
-              <input type="text" id="p-grupo" placeholder="Grupo A">
-            </div>
-          </div>
-          <button class="btn btn-primary" id="create-partido-btn">+ Agregar partido</button>
-        </div>
+        <div class="card-title">✅ Confirmar resultados oficiales <span class="admin-badge">ADMIN</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Al confirmar, los puntos se calculan automáticamente según el reglamento.</p>
+        <div id="admin-partidos-list"><div class="empty"><div class="empty-icon">📋</div><p>No hay partidos pendientes de resultado</p></div></div>
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="icon">✅</span>Ingresar resultados oficiales <span class="admin-badge">ADMIN</span></div>
-        <div id="admin-partidos-list"><div class="empty"><div class="empty-icon">📋</div><p>No hay partidos cargados</p></div></div>
+        <div class="card-title">⚙️ Inicializar partidos del mundial <span class="admin-badge">ADMIN</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Carga los 48 partidos de la fase de grupos con fechas y horarios oficiales (hora Ecuador).</p>
+        <button class="btn btn-primary" id="seed-partidos-btn">🌐 Cargar 48 partidos del Mundial 2026</button>
+        <div id="seed-status" style="margin-top:12px;font-size:13px;color:var(--text2)"></div>
       </div>
     </div>
 
@@ -449,69 +317,105 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 
 <div id="toast"></div>
 
-<!-- FIREBASE SDK -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, query, orderBy, onSnapshot, getDocs, where, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged,createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,updateDoc,collection,query,orderBy,onSnapshot,getDocs,where,serverTimestamp,limit,writeBatch}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyC8qxFqebL_9aj1jQOUWO0Hca03FsR7x-w",
-  authDomain: "el-mundial-d-el-tiburon.firebaseapp.com",
-  projectId: "el-mundial-d-el-tiburon",
-  storageBucket: "el-mundial-d-el-tiburon.firebasestorage.app",
-  messagingSenderId: "1097555507031",
-  appId: "1:1097555507031:web:beb935bbf2e04141383012"
-};
+const firebaseConfig={apiKey:"AIzaSyC8qxFqebL_9aj1jQOUWO0Hca03FsR7x-w",authDomain:"el-mundial-d-el-tiburon.firebaseapp.com",projectId:"el-mundial-d-el-tiburon",storageBucket:"el-mundial-d-el-tiburon.firebasestorage.app",messagingSenderId:"1097555507031",appId:"1:1097555507031:web:beb935bbf2e04141383012"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+let currentUser=null,currentProfile=null,selectedChampion=null,partidos=[],unsubChat=null;
 
-let currentUser = null;
-let currentProfile = null;
-let selectedChampion = null;
-let partidos = [];
-let unsubChat = null;
+const PARTIDOS_MUNDIAL=[
+  {equipo1:"🇲🇽 México",equipo2:"🇿🇦 Sudáfrica",fecha:"2026-06-11T14:00:00",fase:"Fase de grupos",grupo:"A"},
+  {equipo1:"🇰🇷 Corea del Sur",equipo2:"🇨🇿 Rep. Checa",fecha:"2026-06-11T21:00:00",fase:"Fase de grupos",grupo:"A"},
+  {equipo1:"🇨🇦 Canadá",equipo2:"🇧🇦 Bosnia y Herz.",fecha:"2026-06-12T14:00:00",fase:"Fase de grupos",grupo:"B"},
+  {equipo1:"🇺🇸 Estados Unidos",equipo2:"🇵🇾 Paraguay",fecha:"2026-06-12T20:00:00",fase:"Fase de grupos",grupo:"D"},
+  {equipo1:"🇶🇦 Qatar",equipo2:"🇨🇭 Suiza",fecha:"2026-06-13T14:00:00",fase:"Fase de grupos",grupo:"B"},
+  {equipo1:"🇧🇷 Brasil",equipo2:"🇲🇦 Marruecos",fecha:"2026-06-13T17:00:00",fase:"Fase de grupos",grupo:"C"},
+  {equipo1:"🇭🇹 Haití",equipo2:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia",fecha:"2026-06-13T20:00:00",fase:"Fase de grupos",grupo:"C"},
+  {equipo1:"🇦🇺 Australia",equipo2:"🇹🇷 Turquía",fecha:"2026-06-13T23:00:00",fase:"Fase de grupos",grupo:"D"},
+  {equipo1:"🇩🇪 Alemania",equipo2:"🇨🇼 Curazao",fecha:"2026-06-14T12:00:00",fase:"Fase de grupos",grupo:"E"},
+  {equipo1:"🇳🇱 Países Bajos",equipo2:"🇯🇵 Japón",fecha:"2026-06-14T15:00:00",fase:"Fase de grupos",grupo:"F"},
+  {equipo1:"🇨🇮 Costa de Marfil",equipo2:"🇪🇨 Ecuador",fecha:"2026-06-14T18:00:00",fase:"Fase de grupos",grupo:"E"},
+  {equipo1:"🇸🇪 Suecia",equipo2:"🇹🇳 Túnez",fecha:"2026-06-14T21:00:00",fase:"Fase de grupos",grupo:"F"},
+  {equipo1:"🇪🇸 España",equipo2:"🇨🇻 Cabo Verde",fecha:"2026-06-15T11:00:00",fase:"Fase de grupos",grupo:"H"},
+  {equipo1:"🇧🇪 Bélgica",equipo2:"🇪🇬 Egipto",fecha:"2026-06-15T14:00:00",fase:"Fase de grupos",grupo:"G"},
+  {equipo1:"🇸🇦 Arabia Saudita",equipo2:"🇺🇾 Uruguay",fecha:"2026-06-15T17:00:00",fase:"Fase de grupos",grupo:"H"},
+  {equipo1:"🇮🇷 Irán",equipo2:"🇳🇿 Nueva Zelanda",fecha:"2026-06-15T20:00:00",fase:"Fase de grupos",grupo:"G"},
+  {equipo1:"🇫🇷 Francia",equipo2:"🇸🇳 Senegal",fecha:"2026-06-16T14:00:00",fase:"Fase de grupos",grupo:"I"},
+  {equipo1:"🇮🇶 Irak",equipo2:"🇳🇴 Noruega",fecha:"2026-06-16T17:00:00",fase:"Fase de grupos",grupo:"I"},
+  {equipo1:"🇦🇷 Argentina",equipo2:"🇩🇿 Argelia",fecha:"2026-06-16T20:00:00",fase:"Fase de grupos",grupo:"J"},
+  {equipo1:"🇦🇹 Austria",equipo2:"🇯🇴 Jordania",fecha:"2026-06-16T23:00:00",fase:"Fase de grupos",grupo:"J"},
+  {equipo1:"🇵🇹 Portugal",equipo2:"🇨🇩 RD Congo",fecha:"2026-06-17T12:00:00",fase:"Fase de grupos",grupo:"K"},
+  {equipo1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",equipo2:"🇭🇷 Croacia",fecha:"2026-06-17T15:00:00",fase:"Fase de grupos",grupo:"L"},
+  {equipo1:"🇬🇭 Ghana",equipo2:"🇵🇦 Panamá",fecha:"2026-06-17T18:00:00",fase:"Fase de grupos",grupo:"L"},
+  {equipo1:"🇺🇿 Uzbekistán",equipo2:"🇨🇴 Colombia",fecha:"2026-06-17T21:00:00",fase:"Fase de grupos",grupo:"K"},
+  {equipo1:"🇨🇿 Rep. Checa",equipo2:"🇿🇦 Sudáfrica",fecha:"2026-06-18T11:00:00",fase:"Fase de grupos",grupo:"A"},
+  {equipo1:"🇨🇭 Suiza",equipo2:"🇧🇦 Bosnia y Herz.",fecha:"2026-06-18T14:00:00",fase:"Fase de grupos",grupo:"B"},
+  {equipo1:"🇨🇦 Canadá",equipo2:"🇶🇦 Qatar",fecha:"2026-06-18T17:00:00",fase:"Fase de grupos",grupo:"B"},
+  {equipo1:"🇲🇽 México",equipo2:"🇰🇷 Corea del Sur",fecha:"2026-06-18T20:00:00",fase:"Fase de grupos",grupo:"A"},
+  {equipo1:"🇺🇸 Estados Unidos",equipo2:"🇦🇺 Australia",fecha:"2026-06-19T14:00:00",fase:"Fase de grupos",grupo:"D"},
+  {equipo1:"🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escocia",equipo2:"🇲🇦 Marruecos",fecha:"2026-06-19T17:00:00",fase:"Fase de grupos",grupo:"C"},
+  {equipo1:"🇧🇷 Brasil",equipo2:"🇭🇹 Haití",fecha:"2026-06-19T19:30:00",fase:"Fase de grupos",grupo:"C"},
+  {equipo1:"🇹🇷 Turquía",equipo2:"🇵🇾 Paraguay",fecha:"2026-06-19T22:00:00",fase:"Fase de grupos",grupo:"D"},
+  {equipo1:"🇳🇱 Países Bajos",equipo2:"🇸🇪 Suecia",fecha:"2026-06-20T12:00:00",fase:"Fase de grupos",grupo:"F"},
+  {equipo1:"🇩🇪 Alemania",equipo2:"🇨🇮 Costa de Marfil",fecha:"2026-06-20T15:00:00",fase:"Fase de grupos",grupo:"E"},
+  {equipo1:"🇪🇨 Ecuador",equipo2:"🇨🇼 Curazao",fecha:"2026-06-20T21:00:00",fase:"Fase de grupos",grupo:"E"},
+  {equipo1:"🇹🇳 Túnez",equipo2:"🇯🇵 Japón",fecha:"2026-06-20T23:00:00",fase:"Fase de grupos",grupo:"F"},
+  {equipo1:"🇪🇸 España",equipo2:"🇸🇦 Arabia Saudita",fecha:"2026-06-21T11:00:00",fase:"Fase de grupos",grupo:"H"},
+  {equipo1:"🇧🇪 Bélgica",equipo2:"🇮🇷 Irán",fecha:"2026-06-21T14:00:00",fase:"Fase de grupos",grupo:"G"},
+  {equipo1:"🇺🇾 Uruguay",equipo2:"🇨🇻 Cabo Verde",fecha:"2026-06-21T17:00:00",fase:"Fase de grupos",grupo:"H"},
+  {equipo1:"🇳🇿 Nueva Zelanda",equipo2:"🇪🇬 Egipto",fecha:"2026-06-21T20:00:00",fase:"Fase de grupos",grupo:"G"},
+  {equipo1:"🇦🇷 Argentina",equipo2:"🇦🇹 Austria",fecha:"2026-06-22T12:00:00",fase:"Fase de grupos",grupo:"J"},
+  {equipo1:"🇫🇷 Francia",equipo2:"🇮🇶 Irak",fecha:"2026-06-22T16:00:00",fase:"Fase de grupos",grupo:"I"},
+  {equipo1:"🇳🇴 Noruega",equipo2:"🇸🇳 Senegal",fecha:"2026-06-22T19:00:00",fase:"Fase de grupos",grupo:"I"},
+  {equipo1:"🇯🇴 Jordania",equipo2:"🇩🇿 Argelia",fecha:"2026-06-22T22:00:00",fase:"Fase de grupos",grupo:"J"},
+  {equipo1:"🇵🇹 Portugal",equipo2:"🇺🇿 Uzbekistán",fecha:"2026-06-23T12:00:00",fase:"Fase de grupos",grupo:"K"},
+  {equipo1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",equipo2:"🇬🇭 Ghana",fecha:"2026-06-23T15:00:00",fase:"Fase de grupos",grupo:"L"},
+  {equipo1:"🇵🇦 Panamá",equipo2:"🇭🇷 Croacia",fecha:"2026-06-23T18:00:00",fase:"Fase de grupos",grupo:"L"},
+  {equipo1:"🇨🇴 Colombia",equipo2:"🇨🇩 RD Congo",fecha:"2026-06-23T21:00:00",fase:"Fase de grupos",grupo:"K"},
+];
 
-// SELECCIONES PARA EL CAMPEÓN
-const selecciones = [
+const selecciones=[
   {pais:"Brasil",flag:"🇧🇷"},{pais:"Argentina",flag:"🇦🇷"},{pais:"Francia",flag:"🇫🇷"},
   {pais:"España",flag:"🇪🇸"},{pais:"Portugal",flag:"🇵🇹"},{pais:"Alemania",flag:"🇩🇪"},
   {pais:"Inglaterra",flag:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"},{pais:"Ecuador",flag:"🇪🇨"},{pais:"Uruguay",flag:"🇺🇾"},
   {pais:"Colombia",flag:"🇨🇴"},{pais:"México",flag:"🇲🇽"},{pais:"USA",flag:"🇺🇸"},
-  {pais:"Holanda",flag:"🇳🇱"},{pais:"Bélgica",flag:"🇧🇪"},{pais:"Croacia",flag:"🇭🇷"},
+  {pais:"Países Bajos",flag:"🇳🇱"},{pais:"Bélgica",flag:"🇧🇪"},{pais:"Croacia",flag:"🇭🇷"},
   {pais:"Marruecos",flag:"🇲🇦"},{pais:"Japón",flag:"🇯🇵"},{pais:"Senegal",flag:"🇸🇳"},
-  {pais:"Italia",flag:"🇮🇹"},{pais:"Turquía",flag:"🇹🇷"}
+  {pais:"Suecia",flag:"🇸🇪"},{pais:"Noruega",flag:"🇳🇴"},{pais:"Turquía",flag:"🇹🇷"},
+  {pais:"Corea del Sur",flag:"🇰🇷"},{pais:"Australia",flag:"🇦🇺"},{pais:"Canadá",flag:"🇨🇦"}
 ];
 
-function showToast(msg, ok=true){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.style.background=ok?'#2e7d32':'#b71c1c';
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
+const PUNTOS_FASE={
+  "Fase de grupos":{resultado:10,marcador:10},
+  "Dieciseisavos":{resultado:20,marcador:20},
+  "Octavos de final":{resultado:30,marcador:30},
+  "Cuartos de final":{resultado:40,marcador:40},
+  "Semifinal":{resultado:50,marcador:50},
+  "Final":{resultado:60,marcador:60}
+};
+
+function showToast(msg,ok=true){const t=document.getElementById('toast');t.textContent=msg;t.style.background=ok?'#2e7d32':'#b71c1c';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+function getInitials(n){if(!n)return'??';return n.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function formatDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('es-EC',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
+function horasRestantes(ts){if(!ts)return 999;const d=ts.toDate?ts.toDate():new Date(ts);return(d-Date.now())/3600000;}
+
+function calcularPuntos(p1,p2,r1,r2,fase){
+  const pts=PUNTOS_FASE[fase]||PUNTOS_FASE["Fase de grupos"];
+  const resP=p1>p2?1:p1<p2?-1:0;
+  const resR=r1>r2?1:r1<r2?-1:0;
+  let total=0;
+  if(resP===resR)total+=pts.resultado;
+  if(p1===r1&&p2===r2)total+=pts.marcador;
+  return total;
 }
 
-function getInitials(name){
-  if(!name)return'??';
-  return name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-}
-
-function formatDate(ts){
-  if(!ts)return'—';
-  const d=ts.toDate?ts.toDate():new Date(ts);
-  return d.toLocaleDateString('es-EC',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-}
-
-function horasRestantes(ts){
-  if(!ts)return 999;
-  const d=ts.toDate?ts.toDate():new Date(ts);
-  return (d-Date.now())/3600000;
-}
-
-// AUTH STATE
-onAuthStateChanged(auth, async user=>{
+onAuthStateChanged(auth,async user=>{
   document.getElementById('loading').style.display='none';
   if(user){
     currentUser=user;
@@ -520,40 +424,33 @@ onAuthStateChanged(auth, async user=>{
       currentProfile=snap.data();
       document.getElementById('header-name').textContent=currentProfile.nombre;
       document.getElementById('header-initials').textContent=getInitials(currentProfile.nombre);
-      if(currentProfile.rol==='admin') document.getElementById('admin-nav').style.display='flex';
+      if(currentProfile.rol==='admin')document.getElementById('admin-nav').style.display='flex';
     }
     document.getElementById('login-screen').style.display='none';
     document.getElementById('main-app').style.display='block';
     loadDashboard();
-    loadPartidos();
+    loadPartidosListener();
     loadCampeon();
     startChat();
-  } else {
-    currentUser=null; currentProfile=null;
+  }else{
+    currentUser=null;currentProfile=null;
     document.getElementById('login-screen').style.display='flex';
     document.getElementById('main-app').style.display='none';
     if(unsubChat){unsubChat();unsubChat=null;}
   }
 });
 
-// LOGIN
-document.getElementById('login-btn').addEventListener('click', async()=>{
+document.getElementById('login-btn').addEventListener('click',async()=>{
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
   document.getElementById('login-error').style.display='none';
-  try{
-    await signInWithEmailAndPassword(auth,email,pass);
-  } catch(e){
-    document.getElementById('login-error').style.display='block';
-  }
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch(e){document.getElementById('login-error').style.display='block';}
 });
-document.getElementById('login-email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pass').focus()});
-document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-btn').click()});
-
-// LOGOUT
+document.getElementById('login-email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pass').focus();});
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-btn').click();});
 document.getElementById('logout-btn').addEventListener('click',()=>signOut(auth));
 
-// NAV
 document.querySelectorAll('.nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -564,47 +461,40 @@ document.querySelectorAll('.nav-btn').forEach(btn=>{
     if(btn.dataset.section==='posiciones')loadPosiciones();
     if(btn.dataset.section==='admin')loadAdmin();
     if(btn.dataset.section==='pronosticar')loadPronosticar();
-    if(btn.dataset.section==='resultados')loadResultados();
+    if(btn.dataset.section==='resultados')loadResultados('todos');
   });
 });
 
-// LOAD DASHBOARD
+function loadPartidosListener(){
+  onSnapshot(query(collection(db,'partidos'),orderBy('fecha','asc')),snap=>{
+    partidos=[];
+    snap.forEach(d=>partidos.push({id:d.id,...d.data()}));
+    loadDashboard();
+  });
+}
+
 async function loadDashboard(){
   const usersSnap=await getDocs(collection(db,'users'));
   document.getElementById('m-jugadores').textContent=usersSnap.size;
-
-  const partidosSnap=await getDocs(collection(db,'partidos'));
-  let jugados=0;
-  partidos=[];
-  partidosSnap.forEach(d=>{
-    const p={id:d.id,...d.data()};
-    partidos.push(p);
-    if(p.jugado)jugados++;
-  });
+  let jugados=partidos.filter(p=>p.jugado).length;
+  document.getElementById('m-partidos').textContent=partidos.length||48;
   document.getElementById('m-jugados').textContent=jugados;
-
-  if(currentProfile){
-    document.getElementById('m-mis-pts').textContent=currentProfile.puntos||0;
-  }
-
-  const proximos=partidos.filter(p=>!p.jugado).sort((a,b)=>{
-    const da=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    const db2=b.fecha?.toDate?b.fecha.toDate():new Date(b.fecha||0);
-    return da-db2;
-  }).slice(0,5);
-
+  if(currentProfile)document.getElementById('m-mis-pts').textContent=currentProfile.puntos||0;
+  loadTop5();
+  const ahora=Date.now();
+  const proximos=partidos.filter(p=>!p.jugado).slice(0,5);
   const proxEl=document.getElementById('proximos-list');
   if(proximos.length===0){proxEl.innerHTML='<div class="empty"><div class="empty-icon">📅</div><p>No hay partidos próximos</p></div>';return;}
-  proxEl.innerHTML=proximos.map(p=>`
-    <div class="match-item">
-      <div class="match-teams" style="flex:1">
-        <div class="match-name">${p.equipo1} <span class="match-vs">vs</span> ${p.equipo2}</div>
-        <div class="match-meta">${formatDate(p.fecha)} · ${p.fase||''}</div>
+  proxEl.innerHTML=proximos.map(p=>{
+    const horas=Math.round(horasRestantes(p.fecha));
+    return`<div class="match-item">
+      <div class="match-teams">
+        <div class="match-name">${p.equipo1} <span class="match-vs">vs</span> ${p.equipo2} <span class="grupo-tag">Grupo ${p.grupo}</span></div>
+        <div class="match-meta">${formatDate(p.fecha)} · ${p.fase}</div>
       </div>
-      <span class="badge b-blue">${p.fase||'Próximo'}</span>
-    </div>`).join('');
-
-  loadTop5();
+      <span class="badge b-blue">${horas>0?horas+'h':'Próximo'}</span>
+    </div>`;
+  }).join('');
 }
 
 async function loadTop5(){
@@ -612,115 +502,86 @@ async function loadTop5(){
   const el=document.getElementById('top5-list');
   if(snap.empty){el.innerHTML='<div class="empty"><div class="empty-icon">🏆</div><p>Sin puntos registrados aún</p></div>';return;}
   const badges=['b-gold','b-silver','b-bronze','b-gray','b-gray'];
-  const nums=['1','2','3','4','5'];
-  let html='<table><tr><th>#</th><th>Jugador</th><th>Pts</th><th>Exactos</th></tr>';
-  let i=0;
+  let i=0,html='<table><tr><th>#</th><th>Jugador</th><th>Pts</th></tr>';
   snap.forEach(d=>{
     const u=d.data();
-    html+=`<tr><td><span class="badge ${badges[i]||'b-gray'}">${nums[i]||i+1}</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${getInitials(u.nombre)}</div>${u.nombre}</div></td><td><strong>${u.puntos||0}</strong></td><td>${u.exactos||0}</td></tr>`;
+    html+=`<tr><td><span class="badge ${badges[i]||'b-gray'}">${i+1}</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${getInitials(u.nombre)}</div>${u.nombre}</div></td><td><strong style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dorado)">${u.puntos||0}</strong></td></tr>`;
     i++;
   });
   html+='</table>';
   el.innerHTML=html;
 }
 
-// LOAD PARTIDOS (listener global)
-function loadPartidos(){
-  onSnapshot(query(collection(db,'partidos'),orderBy('fecha','asc')),snap=>{
-    partidos=[];
-    snap.forEach(d=>partidos.push({id:d.id,...d.data()}));
-    loadPronosticar();
-    loadResultados();
-  });
-}
-
-// PRONOSTICAR
 async function loadPronosticar(){
   if(!currentUser)return;
   const ahora=Date.now();
   const disponibles=partidos.filter(p=>{
     if(p.jugado)return false;
     const fecha=p.fecha?.toDate?p.fecha.toDate():new Date(p.fecha||0);
-    return (fecha-ahora)>3600000*24;
+    return(fecha-ahora)>3600000*24;
   });
-
   const listaEl=document.getElementById('pronosticos-lista');
   if(disponibles.length===0){
-    listaEl.innerHTML='<div class="empty"><div class="empty-icon">⏰</div><p>No hay partidos disponibles para pronosticar ahora</p></div>';
-  } else {
+    listaEl.innerHTML='<div class="empty"><div class="empty-icon">⏰</div><p>No hay partidos disponibles para pronosticar ahora.<br>Los pronósticos cierran 24h antes de cada partido.</p></div>';
+  }else{
     const myPronsSnap=await getDocs(query(collection(db,'pronosticos'),where('userId','==',currentUser.uid)));
     const myProns={};
     myPronsSnap.forEach(d=>{myProns[d.data().partidoId]=d.data();});
-
     listaEl.innerHTML=disponibles.map(p=>{
       const fecha=p.fecha?.toDate?p.fecha.toDate():new Date(p.fecha||0);
       const horas=Math.round((fecha-ahora)/3600000);
-      const yaPronostico=myProns[p.id];
-      return `<div class="prono-card">
+      const ya=myProns[p.id];
+      const pts=PUNTOS_FASE[p.fase]||PUNTOS_FASE["Fase de grupos"];
+      return`<div class="prono-card">
         <div class="prono-header">
           <div>
-            <div class="prono-match">${p.equipo1} vs ${p.equipo2}</div>
-            <div class="prono-meta" style="font-size:11px;color:var(--text2);margin-top:3px">${formatDate(p.fecha)} · ${p.fase||''}</div>
+            <div class="prono-match">${p.equipo1} vs ${p.equipo2} <span class="grupo-tag">Grupo ${p.grupo}</span></div>
+            <div style="font-size:11px;color:var(--text2);margin-top:3px">${formatDate(p.fecha)} · <span class="puntos-fase">+${pts.resultado} pts resultado / +${pts.marcador} pts exacto</span></div>
           </div>
-          <div class="prono-deadline ${horas<48?'urgent':''}">⏱ ${horas}h restantes</div>
+          <div class="prono-deadline ${horas<48?'urgent':''}">⏱ ${horas}h para cerrar</div>
         </div>
         <div class="prono-score-row">
-          <div class="prono-team">
-            <span class="prono-flag">${p.equipo1.split(' ')[0]}</span>
-            <span>${p.equipo1.split(' ').slice(1).join(' ')}</span>
-          </div>
-          <input type="number" class="prono-input" id="g1-${p.id}" min="0" max="20" value="${yaPronostico?yaPronostico.goles1:''}" placeholder="0">
+          <div class="prono-team"><span class="prono-flag">${p.equipo1.split(' ')[0]}</span><span>${p.equipo1.split(' ').slice(1).join(' ')}</span></div>
+          <input type="number" class="prono-input" id="g1-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles1:''}" placeholder="0">
           <span class="prono-vs">—</span>
-          <input type="number" class="prono-input" id="g2-${p.id}" min="0" max="20" value="${yaPronostico?yaPronostico.goles2:''}" placeholder="0">
-          <div class="prono-team">
-            <span class="prono-flag">${p.equipo2.split(' ')[0]}</span>
-            <span>${p.equipo2.split(' ').slice(1).join(' ')}</span>
-          </div>
+          <input type="number" class="prono-input" id="g2-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles2:''}" placeholder="0">
+          <div class="prono-team"><span class="prono-flag">${p.equipo2.split(' ')[0]}</span><span>${p.equipo2.split(' ').slice(1).join(' ')}</span></div>
         </div>
         <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
-          <button class="btn btn-primary" onclick="guardarPronostico('${p.id}')">💾 ${yaPronostico?'Actualizar':'Guardar'} pronóstico</button>
-          ${yaPronostico?'<span class="badge b-green">✓ Guardado</span>':''}
+          <button class="btn btn-primary" onclick="guardarPronostico('${p.id}')">💾 ${ya!==undefined?'Actualizar':'Guardar'}</button>
+          ${ya!==undefined?'<span class="badge b-green">✓ Guardado</span>':''}
         </div>
       </div>`;
     }).join('');
   }
-
-  // Mis pronósticos guardados
   const myPronsSnap2=await getDocs(query(collection(db,'pronosticos'),where('userId','==',currentUser.uid)));
   const guardadosEl=document.getElementById('mis-pronosticos-guardados');
-  if(myPronsSnap2.empty){
-    guardadosEl.innerHTML='<div class="empty"><div class="empty-icon">📝</div><p>Aún no has ingresado pronósticos</p></div>';
-    return;
-  }
-  let html='<table><tr><th>Partido</th><th>Mi pronóstico</th><th>Resultado</th><th>Puntos</th></tr>';
+  if(myPronsSnap2.empty){guardadosEl.innerHTML='<div class="empty"><div class="empty-icon">📝</div><p>Aún no has ingresado pronósticos</p></div>';return;}
   const pronsMap={};
   myPronsSnap2.forEach(d=>{pronsMap[d.data().partidoId]=d.data();});
+  let html='<table><tr><th>Partido</th><th>Mi pronóstico</th><th>Resultado</th><th>Pts</th></tr>';
   for(const p of partidos){
     if(!pronsMap[p.id])continue;
     const pr=pronsMap[p.id];
-    let resStr='Pendiente';
+    let resStr='<span class="badge b-gray">Pendiente</span>';
     let ptsStr='<span class="badge b-gray">—</span>';
     if(p.jugado&&p.goles1!==undefined){
       resStr=`${p.goles1} - ${p.goles2}`;
-      const pts=calcularPuntos(pr.goles1,pr.goles2,p.goles1,p.goles2);
-      ptsStr=`<span class="badge ${pts===10?'b-gold':pts>0?'b-green':'b-red'}">+${pts}</span>`;
+      const pts=calcularPuntos(pr.goles1,pr.goles2,p.goles1,p.goles2,p.fase);
+      ptsStr=`<span class="badge ${pts>0?'b-green':'b-red'}">+${pts}</span>`;
     }
-    const mostrar=p.jugado;
-    html+=`<tr>
-      <td>${p.equipo1} vs ${p.equipo2}</td>
-      <td>${pr.goles1} - ${pr.goles2}</td>
-      <td>${mostrar?resStr:'<span class="badge b-gray">No iniciado</span>'}</td>
-      <td>${mostrar?ptsStr:'<span class="badge b-gray">—</span>'}</td>
-    </tr>`;
+    html+=`<tr><td>${p.equipo1} vs ${p.equipo2}</td><td><strong>${pr.goles1} - ${pr.goles2}</strong></td><td>${p.jugado?resStr:'<span class="badge b-gray">No iniciado</span>'}</td><td>${p.jugado?ptsStr:'—'}</td></tr>`;
   }
   html+='</table>';
   guardadosEl.innerHTML=html;
 }
 
 window.guardarPronostico=async function(partidoId){
-  const g1=parseInt(document.getElementById('g1-'+partidoId)?.value);
-  const g2=parseInt(document.getElementById('g2-'+partidoId)?.value);
-  if(isNaN(g1)||isNaN(g2)){showToast('Ingresa ambos marcadores',false);return;}
+  const g1v=document.getElementById('g1-'+partidoId)?.value;
+  const g2v=document.getElementById('g2-'+partidoId)?.value;
+  if(g1v===''||g2v===''){showToast('Ingresa ambos marcadores',false);return;}
+  const g1=parseInt(g1v),g2=parseInt(g2v);
+  if(isNaN(g1)||isNaN(g2)||g1<0||g2<0){showToast('Marcadores inválidos',false);return;}
   try{
     const ref=doc(db,'pronosticos',currentUser.uid+'_'+partidoId);
     await setDoc(ref,{userId:currentUser.uid,partidoId,goles1:g1,goles2:g2,nombre:currentProfile.nombre,timestamp:serverTimestamp()});
@@ -729,54 +590,29 @@ window.guardarPronostico=async function(partidoId){
   }catch(e){showToast('Error al guardar',false);}
 };
 
-function calcularPuntos(p1,p2,r1,r2){
-  if(p1===r1&&p2===r2)return 10;
-  const resPred=p1>p2?1:p1<p2?-1:0;
-  const resReal=r1>r2?1:r1<r2?-1:0;
-  if(resPred===resReal){return resReal===0?3:5;}
-  return 0;
-}
-
-// POSICIONES
 async function loadPosiciones(){
   const snap=await getDocs(query(collection(db,'users'),orderBy('puntos','desc')));
   const el=document.getElementById('tabla-posiciones');
   if(snap.empty){el.innerHTML='<div class="empty"><div class="empty-icon">🏆</div><p>Sin datos aún</p></div>';return;}
   const badges=['b-gold','b-silver','b-bronze'];
-  let i=0;
-  let html='<table><tr><th>#</th><th>Jugador</th><th>Pts</th><th>Exactos</th><th>Parciales</th><th>Campeón</th></tr>';
+  let i=0,html='<table><tr><th>#</th><th>Jugador</th><th>Pts</th><th>Exactos</th><th>Parciales</th><th>Campeón</th></tr>';
   snap.forEach(d=>{
     const u=d.data();
-    const b=badges[i]||'b-gray';
-    html+=`<tr>
-      <td><span class="badge ${b}">${i+1}</span></td>
-      <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${getInitials(u.nombre)}</div>${u.nombre}</div></td>
-      <td><strong style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dorado)">${u.puntos||0}</strong></td>
-      <td>${u.exactos||0}</td>
-      <td>${u.parciales||0}</td>
-      <td>${u.campeon?`<span class="badge b-green">${u.campeon}</span>`:'<span class="badge b-gray">—</span>'}</td>
-    </tr>`;
+    html+=`<tr><td><span class="badge ${badges[i]||'b-gray'}">${i+1}</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${getInitials(u.nombre)}</div>${u.nombre}</div></td><td><strong style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dorado)">${u.puntos||0}</strong></td><td>${u.exactos||0}</td><td>${u.parciales||0}</td><td>${u.campeon?`<span class="badge b-green">${u.campeon}</span>`:'<span class="badge b-gray">—</span>'}</td></tr>`;
     i++;
   });
-  html+='</table>';
-  el.innerHTML=html;
+  el.innerHTML=html+'</table>';
 }
 
-// RESULTADOS
 function loadResultados(filtro='todos'){
   const el=document.getElementById('historial-lista');
   let lista=filtro==='jugados'?partidos.filter(p=>p.jugado):filtro==='proximos'?partidos.filter(p=>!p.jugado):partidos;
-  lista=lista.sort((a,b)=>{
-    const da=a.fecha?.toDate?a.fecha.toDate():new Date(a.fecha||0);
-    const db2=b.fecha?.toDate?b.fecha.toDate():new Date(b.fecha||0);
-    return da-db2;
-  });
   if(lista.length===0){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>No hay partidos en esta categoría</p></div>';return;}
   el.innerHTML=lista.map(p=>`
     <div class="match-item">
-      <div class="match-teams" style="flex:1">
-        <div class="match-name">${p.equipo1} <span class="match-vs">${p.jugado?`${p.goles1} - ${p.goles2}`:'vs'}</span> ${p.equipo2}</div>
-        <div class="match-meta">${formatDate(p.fecha)} · ${p.fase||''}</div>
+      <div class="match-teams">
+        <div class="match-name">${p.equipo1} <span class="match-vs">${p.jugado?`${p.goles1} - ${p.goles2}`:'vs'}</span> ${p.equipo2} <span class="grupo-tag">Grupo ${p.grupo}</span></div>
+        <div class="match-meta">${formatDate(p.fecha)} · ${p.fase}</div>
       </div>
       <span class="badge ${p.jugado?'b-green':'b-blue'}">${p.jugado?'Finalizado':'Próximo'}</span>
     </div>`).join('');
@@ -790,25 +626,21 @@ document.querySelectorAll('.tab[data-filter]').forEach(t=>{
   });
 });
 
-// CAMPEON
 async function loadCampeon(){
   const grid=document.getElementById('champ-grid');
   const votosSnap=await getDocs(collection(db,'users'));
   const votos={};
   votosSnap.forEach(d=>{if(d.data().campeon)votos[d.data().campeon]=(votos[d.data().campeon]||0)+1;});
-
   if(currentProfile?.campeon){
     selectedChampion=currentProfile.campeon;
-    document.getElementById('mi-campeon-txt').textContent=`Tu apuesta actual: ${currentProfile.campeon}`;
+    document.getElementById('mi-campeon-txt').textContent='Tu apuesta actual: '+currentProfile.campeon;
   }
-
   grid.innerHTML=selecciones.map(s=>`
     <div class="champ-card ${selectedChampion===s.pais?'selected':''}" data-pais="${s.pais}">
       <span class="champ-flag">${s.flag}</span>
       <div class="champ-name">${s.pais}</div>
       <div class="champ-votes">${votos[s.pais]||0} voto${(votos[s.pais]||0)!==1?'s':''}</div>
     </div>`).join('');
-
   document.querySelectorAll('.champ-card').forEach(c=>{
     c.addEventListener('click',()=>{
       document.querySelectorAll('.champ-card').forEach(x=>x.classList.remove('selected'));
@@ -816,15 +648,10 @@ async function loadCampeon(){
       selectedChampion=c.dataset.pais;
     });
   });
-
   const votosEl=document.getElementById('votos-campeon');
   const sorted=Object.entries(votos).sort((a,b)=>b[1]-a[1]);
   if(sorted.length===0){votosEl.innerHTML='<div class="empty"><div class="empty-icon">⭐</div><p>Nadie ha votado aún</p></div>';return;}
-  votosEl.innerHTML='<table><tr><th>Selección</th><th>Votos</th></tr>'+
-    sorted.map(([p,v])=>{
-      const s=selecciones.find(x=>x.pais===p)||{flag:'🏳'};
-      return `<tr><td>${s.flag} ${p}</td><td><strong>${v}</strong></td></tr>`;
-    }).join('')+'</table>';
+  votosEl.innerHTML='<table><tr><th>Selección</th><th>Votos</th></tr>'+sorted.map(([p,v])=>{const s=selecciones.find(x=>x.pais===p)||{flag:'🏳'};return`<tr><td>${s.flag} ${p}</td><td><strong>${v}</strong></td></tr>`;}).join('')+'</table>';
 }
 
 document.getElementById('save-champ-btn').addEventListener('click',async()=>{
@@ -832,13 +659,12 @@ document.getElementById('save-champ-btn').addEventListener('click',async()=>{
   try{
     await updateDoc(doc(db,'users',currentUser.uid),{campeon:selectedChampion});
     currentProfile.campeon=selectedChampion;
-    document.getElementById('mi-campeon-txt').textContent=`Tu apuesta: ${selectedChampion}`;
+    document.getElementById('mi-campeon-txt').textContent='Tu apuesta: '+selectedChampion;
     showToast('Apuesta guardada: '+selectedChampion+' 🏆');
     loadCampeon();
   }catch(e){showToast('Error al guardar',false);}
 });
 
-// CHAT
 function startChat(){
   const messagesEl=document.getElementById('chat-messages');
   if(unsubChat)unsubChat();
@@ -846,15 +672,11 @@ function startChat(){
     if(snap.empty){messagesEl.innerHTML='<div class="empty"><div class="empty-icon">💬</div><p>Sé el primero en escribir algo 🦈</p></div>';return;}
     messagesEl.innerHTML='';
     snap.forEach(d=>{
-      const m=d.data();
-      const mine=m.userId===currentUser?.uid;
+      const m=d.data();const mine=m.userId===currentUser?.uid;
       const ts=m.timestamp?.toDate?m.timestamp.toDate():new Date();
       const time=ts.getHours()+':'+String(ts.getMinutes()).padStart(2,'0');
-      const div=document.createElement('div');
-      div.className='chat-msg'+(mine?' mine':'');
-      div.innerHTML=`<div class="avatar" style="width:32px;height:32px;font-size:11px;flex-shrink:0">${getInitials(m.nombre)}</div>
-        <div><div class="chat-name">${m.nombre} <span class="chat-time">${time}</span></div>
-        <div class="chat-bubble"><p>${m.texto}</p></div></div>`;
+      const div=document.createElement('div');div.className='chat-msg'+(mine?' mine':'');
+      div.innerHTML=`<div class="avatar" style="width:32px;height:32px;font-size:11px;flex-shrink:0">${getInitials(m.nombre)}</div><div><div class="chat-name">${m.nombre} <span class="chat-time">${time}</span></div><div class="chat-bubble"><p>${m.texto}</p></div></div>`;
       messagesEl.appendChild(div);
     });
     messagesEl.scrollTop=messagesEl.scrollHeight;
@@ -863,47 +685,34 @@ function startChat(){
 
 document.getElementById('chat-send-btn').addEventListener('click',sendChat);
 document.getElementById('chat-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat();});
-
 async function sendChat(){
-  const inp=document.getElementById('chat-input');
-  const txt=inp.value.trim();
-  if(!txt||!currentUser)return;
-  inp.value='';
-  try{
-    await addDoc(collection(db,'chat'),{
-      userId:currentUser.uid,nombre:currentProfile?.nombre||'Anónimo',
-      texto:txt,timestamp:serverTimestamp()
-    });
-  }catch(e){showToast('Error al enviar',false);}
+  const inp=document.getElementById('chat-input');const txt=inp.value.trim();
+  if(!txt||!currentUser)return;inp.value='';
+  try{await addDoc(collection(db,'chat'),{userId:currentUser.uid,nombre:currentProfile?.nombre||'Anónimo',texto:txt,timestamp:serverTimestamp()});}
+  catch(e){showToast('Error al enviar',false);}
 }
 
-// ADMIN
 async function loadAdmin(){
   if(!currentProfile||currentProfile.rol!=='admin')return;
   const snap=await getDocs(query(collection(db,'users'),orderBy('nombre')));
   const el=document.getElementById('users-list');
-  if(snap.empty){el.innerHTML='<div class="empty"><p>No hay usuarios</p></div>';return;}
   let html='<table><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Pts</th></tr>';
-  snap.forEach(d=>{
-    const u=d.data();
-    html+=`<tr><td>${u.nombre}</td><td>${u.email}</td><td><span class="badge ${u.rol==='admin'?'b-red':'b-blue'}">${u.rol}</span></td><td>${u.puntos||0}</td></tr>`;
-  });
-  html+='</table>';
-  el.innerHTML=html;
+  snap.forEach(d=>{const u=d.data();html+=`<tr><td>${u.nombre}</td><td style="font-size:12px">${u.email}</td><td><span class="badge ${u.rol==='admin'?'b-red':'b-blue'}">${u.rol}</span></td><td>${u.puntos||0}</td></tr>`;});
+  el.innerHTML=html+'</table>';
 
-  const partidosEl=document.getElementById('admin-partidos-list');
   const pendientes=partidos.filter(p=>!p.jugado);
-  if(pendientes.length===0){partidosEl.innerHTML='<div class="empty"><p>No hay partidos pendientes de resultado</p></div>';return;}
+  const partidosEl=document.getElementById('admin-partidos-list');
+  if(pendientes.length===0){partidosEl.innerHTML='<div class="empty"><p>No hay partidos pendientes</p></div>';return;}
   partidosEl.innerHTML=pendientes.map(p=>`
     <div class="match-item">
-      <div class="match-teams" style="flex:1">
-        <div class="match-name">${p.equipo1} vs ${p.equipo2}</div>
+      <div class="match-teams">
+        <div class="match-name">${p.equipo1} vs ${p.equipo2} <span class="grupo-tag">Grupo ${p.grupo}</span></div>
         <div class="match-meta">${formatDate(p.fecha)}</div>
       </div>
-      <input type="number" id="res1-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:18px;color:var(--dorado);font-family:'Bebas Neue',sans-serif">
+      <input type="number" id="res1-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado)">
       <span style="font-size:18px;color:var(--text3)">—</span>
-      <input type="number" id="res2-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:18px;color:var(--dorado);font-family:'Bebas Neue',sans-serif">
-      <button class="btn btn-success" onclick="confirmarResultado('${p.id}')">✅ Confirmar</button>
+      <input type="number" id="res2-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado)">
+      <button class="btn btn-success" onclick="confirmarResultado('${p.id}','${p.fase}')">✅ Confirmar</button>
     </div>`).join('');
 }
 
@@ -916,7 +725,6 @@ document.getElementById('create-user-btn').addEventListener('click',async()=>{
   try{
     const cred=await createUserWithEmailAndPassword(auth,email,pass);
     await setDoc(doc(db,'users',cred.user.uid),{nombre,email,rol,puntos:0,exactos:0,parciales:0,creado:serverTimestamp()});
-    await signInWithEmailAndPassword(auth,document.getElementById('login-email').value||email,document.getElementById('login-pass').value||pass).catch(()=>{});
     showToast('Usuario creado: '+nombre+' ✅');
     document.getElementById('new-user-name').value='';
     document.getElementById('new-user-email').value='';
@@ -925,55 +733,55 @@ document.getElementById('create-user-btn').addEventListener('click',async()=>{
   }catch(e){showToast('Error: '+e.message,false);}
 });
 
-document.getElementById('create-partido-btn').addEventListener('click',async()=>{
-  const e1=document.getElementById('p-team1').value.trim();
-  const e2=document.getElementById('p-team2').value.trim();
-  const fecha=document.getElementById('p-fecha').value;
-  const fase=document.getElementById('p-fase').value;
-  const grupo=document.getElementById('p-grupo').value.trim();
-  if(!e1||!e2||!fecha){showToast('Completa los campos requeridos',false);return;}
-  try{
-    await addDoc(collection(db,'partidos'),{equipo1:e1,equipo2:e2,fecha:new Date(fecha),fase,grupo,jugado:false,creado:serverTimestamp()});
-    showToast('Partido agregado ✅');
-    document.getElementById('p-team1').value='';
-    document.getElementById('p-team2').value='';
-    document.getElementById('p-fecha').value='';
-    document.getElementById('p-grupo').value='';
-  }catch(e){showToast('Error: '+e.message,false);}
-});
-
-window.confirmarResultado=async function(partidoId){
+window.confirmarResultado=async function(partidoId,fase){
   const g1=parseInt(document.getElementById('res1-'+partidoId)?.value);
   const g2=parseInt(document.getElementById('res2-'+partidoId)?.value);
   if(isNaN(g1)||isNaN(g2)){showToast('Ingresa ambos goles',false);return;}
   try{
     await updateDoc(doc(db,'partidos',partidoId),{goles1:g1,goles2:g2,jugado:true});
     const pronsSnap=await getDocs(query(collection(db,'pronosticos'),where('partidoId','==',partidoId)));
-    const batch=[];
+    const updates=[];
     pronsSnap.forEach(d=>{
       const pr=d.data();
-      const pts=calcularPuntos(pr.goles1,pr.goles2,g1,g2);
-      const esExacto=pr.goles1===g1&&pr.goles2===g2;
-      const esParcial=pts===5||pts===3;
-      batch.push({uid:pr.userId,pts,exacto:esExacto?1:0,parcial:esParcial?1:0});
+      const pts=calcularPuntos(pr.goles1,pr.goles2,g1,g2,fase);
+      const esExacto=(pr.goles1===g1&&pr.goles2===g2);
+      const esParcial=pts>0&&!esExacto;
+      updates.push({uid:pr.userId,pts,exacto:esExacto?1:0,parcial:esParcial?1:0});
     });
-    for(const b of batch){
-      const uRef=doc(db,'users',b.uid);
+    for(const u of updates){
+      const uRef=doc(db,'users',u.uid);
       const uSnap=await getDoc(uRef);
       if(uSnap.exists()){
         const ud=uSnap.data();
-        await updateDoc(uRef,{
-          puntos:(ud.puntos||0)+b.pts,
-          exactos:(ud.exactos||0)+b.exacto,
-          parciales:(ud.parciales||0)+b.parcial
-        });
+        await updateDoc(uRef,{puntos:(ud.puntos||0)+u.pts,exactos:(ud.exactos||0)+u.exacto,parciales:(ud.parciales||0)+u.parcial});
       }
     }
-    showToast(`Resultado confirmado: ${g1} - ${g2} ✅`);
+    showToast(`✅ ${g1}-${g2} confirmado. ${updates.length} pronósticos calculados.`);
     loadAdmin();
-    loadDashboard();
   }catch(e){showToast('Error: '+e.message,false);}
 };
+
+document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('seed-partidos-btn');
+  const status=document.getElementById('seed-status');
+  btn.disabled=true;btn.textContent='⏳ Cargando...';
+  try{
+    let count=0;
+    for(const p of PARTIDOS_MUNDIAL){
+      await addDoc(collection(db,'partidos'),{
+        equipo1:p.equipo1,equipo2:p.equipo2,
+        fecha:new Date(p.fecha),
+        fase:p.fase,grupo:p.grupo,jugado:false,
+        creado:serverTimestamp()
+      });
+      count++;
+      status.textContent=`Cargando... ${count}/${PARTIDOS_MUNDIAL.length}`;
+    }
+    showToast('48 partidos cargados exitosamente 🌐');
+    status.textContent='✅ 48 partidos del Mundial 2026 cargados correctamente.';
+    btn.textContent='✅ Ya cargados';
+  }catch(e){showToast('Error: '+e.message,false);btn.disabled=false;btn.textContent='🌐 Cargar 48 partidos';}
+});
 </script>
 </body>
 </html>
