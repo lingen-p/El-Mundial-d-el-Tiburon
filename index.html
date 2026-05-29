@@ -186,7 +186,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     <button class="nav-btn" data-section="pronosticar">⚽ Pronosticar</button>
     <button class="nav-btn" data-section="posiciones">🏆 Posiciones</button>
     <button class="nav-btn" data-section="resultados">📋 Resultados</button>
-    <button class="nav-btn" data-section="campeon">⭐ Campeón</button>
+    <button class="nav-btn" data-section="campeon">🏅 Podio</button>
     <button class="nav-btn" data-section="chat">💬 Chat</button>
     <button class="nav-btn" data-section="admin" id="admin-nav" style="display:none">🔧 Admin</button>
   </div>
@@ -238,7 +238,9 @@ tr:hover td{background:rgba(255,255,255,0.02)}
           <div class="point-item"><div class="point-val">40</div><div class="point-label">Resultado · Cuartos</div></div>
           <div class="point-item"><div class="point-val">50</div><div class="point-label">Resultado · Semis</div></div>
           <div class="point-item"><div class="point-val">60</div><div class="point-label">Resultado · Final</div></div>
-          <div class="point-item"><div class="point-val">100</div><div class="point-label">Campeón acertado</div></div>
+          <div class="point-item" style="border-color:rgba(255,214,0,0.3)"><div class="point-val">50</div><div class="point-label">Podio · País en Top 4</div></div>
+          <div class="point-item" style="border-color:rgba(255,214,0,0.3)"><div class="point-val">+50</div><div class="point-label">Podio · Posición exacta</div></div>
+          <div class="point-item" style="border-color:rgba(255,214,0,0.5);background:rgba(255,214,0,0.05)"><div class="point-val" style="color:var(--dorado)">400</div><div class="point-label">Podio · Máximo total</div></div>
         </div>
       </div>
     </div>
@@ -257,17 +259,77 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 
     <div class="section" id="campeon">
       <div class="card">
-        <div class="card-title">⭐ ¿Quién será el campeón del mundo?</div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Tu apuesta al campeón vale hasta <strong style="color:var(--dorado)">100 puntos bonus</strong>. Puedes cambiarla antes del primer partido (11 jun).</p>
-        <div class="champ-grid" id="champ-grid"></div>
-        <div style="margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary" id="save-champ-btn">⭐ Guardar mi apuesta</button>
+        <div class="card-title">🏅 Pronóstico de Podio Mundial 2026</div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:6px">Pronostica los 4 países que llegarán a las semifinales y su posición final.</p>
+        <div style="background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;line-height:1.7">
+          <strong style="color:var(--dorado)">📋 Sistema de puntos del Podio (máx. 400 pts):</strong><br>
+          <span style="color:var(--text2)">• <strong style="color:var(--text)">+50 pts</strong> si el país pronosticado llega a semifinales (Top 4), independientemente de su posición final.<br>
+          • <strong style="color:var(--text)">+50 pts adicionales</strong> si además acertaste exactamente la posición (1°, 2°, 3° o 4°).<br>
+          • <strong style="color:var(--text)">Máximo 100 pts</strong> por selección × 4 selecciones = <strong style="color:var(--dorado)">400 pts en total.</strong></span>
+        </div>
+
+        <div id="podio-slots">
+          <!-- Slot 1: Campeón -->
+          <div style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span style="font-size:22px">🥇</span>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:var(--dorado)">1° — Campeón</div>
+                <div style="font-size:11px;color:var(--text2)">Hasta 100 pts (50 Top4 + 50 posición exacta)</div>
+              </div>
+              <div id="selected-p1-badge" style="margin-left:auto"></div>
+            </div>
+            <div class="champ-grid" id="champ-grid-1"></div>
+          </div>
+          <div class="divider"></div>
+          <!-- Slot 2: Subcampeón -->
+          <div style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span style="font-size:22px">🥈</span>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:#ccc">2° — Subcampeón</div>
+                <div style="font-size:11px;color:var(--text2)">Hasta 100 pts (50 Top4 + 50 posición exacta)</div>
+              </div>
+              <div id="selected-p2-badge" style="margin-left:auto"></div>
+            </div>
+            <div class="champ-grid" id="champ-grid-2"></div>
+          </div>
+          <div class="divider"></div>
+          <!-- Slot 3: Tercero -->
+          <div style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span style="font-size:22px">🥉</span>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:#cd7f32">3° — Tercer lugar</div>
+                <div style="font-size:11px;color:var(--text2)">Hasta 100 pts (50 Top4 + 50 posición exacta)</div>
+              </div>
+              <div id="selected-p3-badge" style="margin-left:auto"></div>
+            </div>
+            <div class="champ-grid" id="champ-grid-3"></div>
+          </div>
+          <div class="divider"></div>
+          <!-- Slot 4: Cuarto -->
+          <div style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span style="font-size:22px">4️⃣</span>
+              <div>
+                <div style="font-weight:700;font-size:15px;color:var(--text)">4° — Cuarto lugar</div>
+                <div style="font-size:11px;color:var(--text2)">Hasta 100 pts (50 Top4 + 50 posición exacta)</div>
+              </div>
+              <div id="selected-p4-badge" style="margin-left:auto"></div>
+            </div>
+            <div class="champ-grid" id="champ-grid-4"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary" id="save-champ-btn">🏅 Guardar mi Podio</button>
           <span id="mi-campeon-txt" style="font-size:13px;color:var(--text2)"></span>
         </div>
       </div>
       <div class="card">
-        <div class="card-title">📊 Votos del grupo</div>
-        <div id="votos-campeon"><div class="empty"><div class="empty-icon">⭐</div><p>Cargando votos...</p></div></div>
+        <div class="card-title">📊 Podios del grupo</div>
+        <div id="votos-campeon"><div class="empty"><div class="empty-icon">🏅</div><p>Cargando pronósticos...</p></div></div>
       </div>
     </div>
 
@@ -305,6 +367,19 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       </div>
 
       <div class="card">
+        <div class="card-title">🏅 Confirmar Podio oficial del Mundial <span class="admin-badge">ADMIN</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Una vez terminado el mundial, ingresa el podio oficial para calcular los puntos automáticamente.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+          <div class="form-group"><label>🥇 Campeón (1°)</label><select id="podio-real-1"><option value="">— Seleccionar —</option></select></div>
+          <div class="form-group"><label>🥈 Subcampeón (2°)</label><select id="podio-real-2"><option value="">— Seleccionar —</option></select></div>
+          <div class="form-group"><label>🥉 Tercer lugar (3°)</label><select id="podio-real-3"><option value="">— Seleccionar —</option></select></div>
+          <div class="form-group"><label>4️⃣ Cuarto lugar (4°)</label><select id="podio-real-4"><option value="">— Seleccionar —</option></select></div>
+        </div>
+        <button class="btn btn-primary" id="confirmar-podio-btn">🏅 Confirmar Podio y calcular puntos</button>
+        <div id="podio-status" style="margin-top:12px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
+      <div class="card">
         <div class="card-title">⚙️ Inicializar partidos del mundial <span class="admin-badge">ADMIN</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Carga los 48 partidos de la fase de grupos con fechas y horarios oficiales (hora Ecuador).</p>
         <button class="btn btn-primary" id="seed-partidos-btn">🌐 Cargar 48 partidos del Mundial 2026</button>
@@ -327,7 +402,7 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-let currentUser=null,currentProfile=null,selectedChampion=null,partidos=[],unsubChat=null;
+let currentUser=null,currentProfile=null,selectedPodio={1:null,2:null,3:null,4:null},partidos=[],unsubChat=null;
 
 const PARTIDOS_MUNDIAL=[
   {equipo1:"🇲🇽 México",equipo2:"🇿🇦 Sudáfrica",fecha:"2026-06-11T14:00:00",fase:"Fase de grupos",grupo:"A"},
@@ -595,10 +670,18 @@ async function loadPosiciones(){
   const el=document.getElementById('tabla-posiciones');
   if(snap.empty){el.innerHTML='<div class="empty"><div class="empty-icon">🏆</div><p>Sin datos aún</p></div>';return;}
   const badges=['b-gold','b-silver','b-bronze'];
-  let i=0,html='<table><tr><th>#</th><th>Jugador</th><th>Pts</th><th>Exactos</th><th>Parciales</th><th>Campeón</th></tr>';
+  let i=0,html='<table><tr><th>#</th><th>Jugador</th><th>Pts</th><th>Exactos</th><th>Parciales</th><th>Podio pronosticado</th></tr>';
   snap.forEach(d=>{
     const u=d.data();
-    html+=`<tr><td><span class="badge ${badges[i]||'b-gray'}">${i+1}</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${getInitials(u.nombre)}</div>${u.nombre}</div></td><td><strong style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dorado)">${u.puntos||0}</strong></td><td>${u.exactos||0}</td><td>${u.parciales||0}</td><td>${u.campeon?`<span class="badge b-green">${u.campeon}</span>`:'<span class="badge b-gray">—</span>'}</td></tr>`;
+    let podioStr='<span class="badge b-gray">—</span>';
+    if(u.podio){
+      const s1=selecciones.find(s=>s.pais===u.podio[1]);
+      const s2=selecciones.find(s=>s.pais===u.podio[2]);
+      const s3=selecciones.find(s=>s.pais===u.podio[3]);
+      const s4=selecciones.find(s=>s.pais===u.podio[4]);
+      podioStr=`<span style="font-size:12px">${s1?.flag||''}${s2?.flag||''}${s3?.flag||''}${s4?.flag||''}</span>`;
+    }
+    html+=`<tr><td><span class="badge ${badges[i]||'b-gray'}">${i+1}</span></td><td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:28px;height:28px;font-size:10px">${getInitials(u.nombre)}</div>${u.nombre}</div></td><td><strong style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--dorado)">${u.puntos||0}</strong></td><td>${u.exactos||0}</td><td>${u.parciales||0}</td><td>${podioStr}</td></tr>`;
     i++;
   });
   el.innerHTML=html+'</table>';
@@ -627,40 +710,96 @@ document.querySelectorAll('.tab[data-filter]').forEach(t=>{
 });
 
 async function loadCampeon(){
-  const grid=document.getElementById('champ-grid');
+  const POSICIONES=[
+    {num:1,emoji:'🥇',label:'Campeón'},
+    {num:2,emoji:'🥈',label:'Subcampeón'},
+    {num:3,emoji:'🥉',label:'Tercero'},
+    {num:4,emoji:'4️⃣',label:'Cuarto'},
+  ];
+
+  // Cargar podios de todos los usuarios para conteo
   const votosSnap=await getDocs(collection(db,'users'));
-  const votos={};
-  votosSnap.forEach(d=>{if(d.data().campeon)votos[d.data().campeon]=(votos[d.data().campeon]||0)+1;});
-  if(currentProfile?.campeon){
-    selectedChampion=currentProfile.campeon;
-    document.getElementById('mi-campeon-txt').textContent='Tu apuesta actual: '+currentProfile.campeon;
+  const votos={1:{},2:{},3:{},4:{}};
+  votosSnap.forEach(d=>{
+    const u=d.data();
+    if(u.podio){
+      [1,2,3,4].forEach(pos=>{
+        if(u.podio[pos])votos[pos][u.podio[pos]]=(votos[pos][u.podio[pos]]||0)+1;
+      });
+    }
+  });
+
+  // Cargar podio guardado del usuario actual
+  if(currentProfile?.podio){
+    selectedPodio={...currentProfile.podio};
   }
-  grid.innerHTML=selecciones.map(s=>`
-    <div class="champ-card ${selectedChampion===s.pais?'selected':''}" data-pais="${s.pais}">
-      <span class="champ-flag">${s.flag}</span>
-      <div class="champ-name">${s.pais}</div>
-      <div class="champ-votes">${votos[s.pais]||0} voto${(votos[s.pais]||0)!==1?'s':''}</div>
-    </div>`).join('');
-  document.querySelectorAll('.champ-card').forEach(c=>{
-    c.addEventListener('click',()=>{
-      document.querySelectorAll('.champ-card').forEach(x=>x.classList.remove('selected'));
-      c.classList.add('selected');
-      selectedChampion=c.dataset.pais;
+
+  // Renderizar cada grid
+  POSICIONES.forEach(({num})=>{
+    const grid=document.getElementById('champ-grid-'+num);
+    if(!grid)return;
+    grid.innerHTML=selecciones.map(s=>{
+      const cnt=votos[num][s.pais]||0;
+      const isSel=selectedPodio[num]===s.pais;
+      // Gris si ya está seleccionado en otra posición
+      const usedElsewhere=Object.entries(selectedPodio).some(([k,v])=>parseInt(k)!==num&&v===s.pais);
+      return`<div class="champ-card ${isSel?'selected':''} ${usedElsewhere?'used-elsewhere':''}" data-pais="${s.pais}" data-pos="${num}" style="${usedElsewhere?'opacity:0.35;pointer-events:none;':''}">
+        <span class="champ-flag">${s.flag}</span>
+        <div class="champ-name">${s.pais}</div>
+        <div class="champ-votes">${cnt} voto${cnt!==1?'s':''}</div>
+      </div>`;
+    }).join('');
+    // Actualizar badge de selección actual
+    const badge=document.getElementById('selected-p'+num+'-badge');
+    if(badge){
+      const sel=selecciones.find(s=>s.pais===selectedPodio[num]);
+      badge.innerHTML=sel?`<span class="badge b-green">${sel.flag} ${sel.pais}</span>`:'<span class="badge b-gray">Sin selección</span>';
+    }
+    // Eventos click
+    grid.querySelectorAll('.champ-card').forEach(c=>{
+      c.addEventListener('click',()=>{
+        const pos=parseInt(c.dataset.pos);
+        const pais=c.dataset.pais;
+        selectedPodio[pos]=pais;
+        loadCampeon(); // re-render para reflejar cambios cruzados
+      });
     });
   });
+
+  // Tabla de podios del grupo
   const votosEl=document.getElementById('votos-campeon');
-  const sorted=Object.entries(votos).sort((a,b)=>b[1]-a[1]);
-  if(sorted.length===0){votosEl.innerHTML='<div class="empty"><div class="empty-icon">⭐</div><p>Nadie ha votado aún</p></div>';return;}
-  votosEl.innerHTML='<table><tr><th>Selección</th><th>Votos</th></tr>'+sorted.map(([p,v])=>{const s=selecciones.find(x=>x.pais===p)||{flag:'🏳'};return`<tr><td>${s.flag} ${p}</td><td><strong>${v}</strong></td></tr>`;}).join('')+'</table>';
+  const allPaises=new Set([...Object.values(votos[1])&&Object.keys(votos[1]),...Object.keys(votos[2]),...Object.keys(votos[3]),...Object.keys(votos[4])]);
+  if(allPaises.size===0){votosEl.innerHTML='<div class="empty"><div class="empty-icon">🏅</div><p>Nadie ha ingresado su podio aún</p></div>';return;}
+  let html='<table><tr><th>Selección</th><th>🥇 1°</th><th>🥈 2°</th><th>🥉 3°</th><th>4️⃣ 4°</th><th>Total votos</th></tr>';
+  // Ordenar por total de votos
+  const paisList=[...allPaises].map(p=>({
+    p,
+    v1:votos[1][p]||0,v2:votos[2][p]||0,v3:votos[3][p]||0,v4:votos[4][p]||0,
+    total:(votos[1][p]||0)+(votos[2][p]||0)+(votos[3][p]||0)+(votos[4][p]||0)
+  })).sort((a,b)=>b.total-a.total);
+  paisList.forEach(({p,v1,v2,v3,v4,total})=>{
+    const s=selecciones.find(x=>x.pais===p)||{flag:'🏳'};
+    html+=`<tr>
+      <td>${s.flag} ${p}</td>
+      <td>${v1?`<strong>${v1}</strong>`:'-'}</td>
+      <td>${v2?`<strong>${v2}</strong>`:'-'}</td>
+      <td>${v3?`<strong>${v3}</strong>`:'-'}</td>
+      <td>${v4?`<strong>${v4}</strong>`:'-'}</td>
+      <td><span class="badge b-blue">${total}</span></td>
+    </tr>`;
+  });
+  votosEl.innerHTML=html+'</table>';
 }
 
 document.getElementById('save-champ-btn').addEventListener('click',async()=>{
-  if(!selectedChampion){showToast('Selecciona un país primero',false);return;}
+  const faltantes=[1,2,3,4].filter(n=>!selectedPodio[n]);
+  if(faltantes.length>0){showToast('Selecciona los 4 puestos del podio',false);return;}
   try{
-    await updateDoc(doc(db,'users',currentUser.uid),{campeon:selectedChampion});
-    currentProfile.campeon=selectedChampion;
-    document.getElementById('mi-campeon-txt').textContent='Tu apuesta: '+selectedChampion;
-    showToast('Apuesta guardada: '+selectedChampion+' 🏆');
+    await updateDoc(doc(db,'users',currentUser.uid),{podio:selectedPodio});
+    currentProfile.podio={...selectedPodio};
+    const s1=selecciones.find(s=>s.pais===selectedPodio[1]);
+    document.getElementById('mi-campeon-txt').textContent=`Podio guardado: ${s1?.flag||''} ${selectedPodio[1]} · ${selectedPodio[2]} · ${selectedPodio[3]} · ${selectedPodio[4]}`;
+    showToast('¡Podio guardado exitosamente! 🏅');
     loadCampeon();
   }catch(e){showToast('Error al guardar',false);}
 });
@@ -694,6 +833,13 @@ async function sendChat(){
 
 async function loadAdmin(){
   if(!currentProfile||currentProfile.rol!=='admin')return;
+  // Poblar selects del podio real
+  [1,2,3,4].forEach(n=>{
+    const sel=document.getElementById('podio-real-'+n);
+    if(sel&&sel.options.length<=1){
+      selecciones.forEach(s=>{const o=document.createElement('option');o.value=s.pais;o.textContent=s.flag+' '+s.pais;sel.appendChild(o);});
+    }
+  });
   const snap=await getDocs(query(collection(db,'users'),orderBy('nombre')));
   const el=document.getElementById('users-list');
   let html='<table><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Pts</th></tr>';
@@ -760,6 +906,40 @@ window.confirmarResultado=async function(partidoId,fase){
     loadAdmin();
   }catch(e){showToast('Error: '+e.message,false);}
 };
+
+document.getElementById('confirmar-podio-btn').addEventListener('click',async()=>{
+  const podioReal={};
+  [1,2,3,4].forEach(n=>{podioReal[n]=document.getElementById('podio-real-'+n)?.value;});
+  if(Object.values(podioReal).some(v=>!v)){showToast('Selecciona los 4 puestos del podio real',false);return;}
+  const uniqueVals=new Set(Object.values(podioReal));
+  if(uniqueVals.size<4){showToast('Cada posición debe ser un país diferente',false);return;}
+  const status=document.getElementById('podio-status');
+  status.textContent='Calculando puntos del podio...';
+  try{
+    const usersSnap=await getDocs(collection(db,'users'));
+    let procesados=0;
+    for(const d of usersSnap.docs){
+      const u=d.data();
+      if(!u.podio)continue;
+      let ptsPodio=0;
+      [1,2,3,4].forEach(pos=>{
+        const pronosticado=u.podio[pos];
+        if(!pronosticado)return;
+        const enTop4=Object.values(podioReal).includes(pronosticado);
+        if(enTop4)ptsPodio+=50; // llegó a semifinales
+        if(podioReal[pos]===pronosticado)ptsPodio+=50; // posición exacta
+      });
+      if(ptsPodio>0){
+        const uRef=doc(db,'users',d.id);
+        const ud=await getDoc(uRef);
+        if(ud.exists())await updateDoc(uRef,{puntos:(ud.data().puntos||0)+ptsPodio,puntosPodioCargados:true});
+        procesados++;
+      }
+    }
+    showToast(`✅ Podio confirmado. ${procesados} jugadores actualizados.`);
+    status.textContent=`✅ Podio oficial: 🥇${podioReal[1]} 🥈${podioReal[2]} 🥉${podioReal[3]} 4°${podioReal[4]} — ${procesados} jugadores actualizados.`;
+  }catch(e){showToast('Error: '+e.message,false);status.textContent='Error: '+e.message;}
+});
 
 document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('seed-partidos-btn');
