@@ -125,19 +125,19 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .pill-open{background:rgba(0,200,83,0.15);color:var(--verde);border:1px solid rgba(0,200,83,0.3)}
 .pill-closed{background:rgba(213,0,0,0.15);color:#ff5252;border:1px solid rgba(213,0,0,0.3)}
 .pill-none{background:rgba(255,255,255,0.08);color:var(--text2);border:1px solid var(--border)}
-.grupo-section{margin-bottom:20px}
-.grupo-equipo-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;cursor:grab;user-select:none;transition:border-color 0.2s}
-.grupo-equipo-row:active{cursor:grabbing}
-.grupo-equipo-row.dragging{opacity:0.4;border-color:var(--dorado)}
-.grupo-equipo-row.drag-over{border-color:var(--dorado);background:rgba(255,214,0,0.06)}
-.grupo-pos-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
-.pos-1{background:rgba(255,214,0,0.2);color:var(--dorado)}
-.pos-2{background:rgba(180,180,180,0.2);color:#ccc}
-.pos-3{background:rgba(205,127,50,0.2);color:#cd7f32}
-.pos-4{background:rgba(255,255,255,0.08);color:var(--text3)}
-.grupo-flag{font-size:20px}
-.grupo-name{flex:1;font-size:14px;font-weight:500}
-.drag-hint{font-size:11px;color:var(--text3);margin-left:auto}
+.grupo-tabla{width:100%;border-collapse:collapse;font-size:13px}
+.grupo-tabla th{padding:7px 8px;color:var(--text2);border-bottom:1px solid var(--border);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
+.grupo-tabla th:first-child{text-align:left}
+.grupo-tabla td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,0.04);text-align:center;vertical-align:middle}
+.grupo-tabla td:first-child{text-align:left}
+.grupo-tabla tr:last-child td{border-bottom:none}
+.grupo-tabla tr.clasificado td{background:rgba(0,200,83,0.04)}
+.pos-dot{width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.pos-dot-1{background:rgba(255,214,0,0.2);color:var(--dorado)}
+.pos-dot-2{background:rgba(180,180,180,0.2);color:#ccc}
+.pos-dot-3{background:rgba(205,127,50,0.15);color:#cd7f32}
+.pos-dot-4{background:rgba(255,255,255,0.08);color:var(--text3)}
+@media(max-width:600px){#grupos-grid{grid-template-columns:1fr!important}}
 .tab-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .tab{padding:7px 16px;border-radius:8px;border:1px solid var(--border);font-size:13px;cursor:pointer;background:var(--card2);color:var(--text2);font-family:'Outfit',sans-serif;font-weight:500;transition:all 0.2s}
 .tab.active{background:var(--dorado);color:#000;border-color:var(--dorado);font-weight:700}
@@ -253,12 +253,18 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         <div class="card-title">📌 Sistema de puntos</div>
         <div class="points-info">
           <div class="point-item"><div class="point-val">10</div><div class="point-label">Resultado · Grupos</div></div>
-          <div class="point-item"><div class="point-val">10</div><div class="point-label">Marcador exacto · Grupos</div></div>
+          <div class="point-item"><div class="point-val">+10</div><div class="point-label">Marcador exacto · Grupos</div></div>
           <div class="point-item"><div class="point-val">20</div><div class="point-label">Resultado · 16avos</div></div>
+          <div class="point-item" style="border-color:rgba(100,181,246,0.4)"><div class="point-val" style="color:#64b5f6">+20</div><div class="point-label">Marcador exacto · 16avos</div></div>
           <div class="point-item"><div class="point-val">30</div><div class="point-label">Resultado · Octavos</div></div>
+          <div class="point-item" style="border-color:rgba(100,181,246,0.4)"><div class="point-val" style="color:#64b5f6">+30</div><div class="point-label">Marcador exacto · Octavos</div></div>
           <div class="point-item"><div class="point-val">40</div><div class="point-label">Resultado · Cuartos</div></div>
+          <div class="point-item" style="border-color:rgba(100,181,246,0.4)"><div class="point-val" style="color:#64b5f6">+40</div><div class="point-label">Marcador exacto · Cuartos</div></div>
           <div class="point-item"><div class="point-val">50</div><div class="point-label">Resultado · Semis</div></div>
+          <div class="point-item" style="border-color:rgba(100,181,246,0.4)"><div class="point-val" style="color:#64b5f6">+50</div><div class="point-label">Marcador exacto · Semis</div></div>
           <div class="point-item"><div class="point-val">60</div><div class="point-label">Resultado · Final</div></div>
+          <div class="point-item" style="border-color:rgba(100,181,246,0.4)"><div class="point-val" style="color:#64b5f6">+60</div><div class="point-label">Marcador exacto · Final</div></div>
+          <div class="point-item"><div class="point-val">20</div><div class="point-label">Posición exacta · Grupos</div></div>
           <div class="point-item" style="border-color:rgba(255,214,0,0.3)"><div class="point-val">50</div><div class="point-label">Podio · País en Top 4</div></div>
           <div class="point-item" style="border-color:rgba(255,214,0,0.3)"><div class="point-val">+50</div><div class="point-label">Podio · Posición exacta</div></div>
           <div class="point-item" style="border-color:rgba(255,214,0,0.5);background:rgba(255,214,0,0.05)"><div class="point-val" style="color:var(--dorado)">400</div><div class="point-label">Podio · Máximo total</div></div>
@@ -279,25 +285,28 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     </div>
 
     <div class="section" id="grupos">
-      <div class="card">
-        <div class="card-title">🗂 Pronóstico de posiciones por grupo</div>
-        <div style="background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;line-height:1.8">
-          <strong style="color:var(--dorado)">📋 Sistema de puntos — Posiciones de Grupo:</strong><br>
-          <span style="color:var(--text2)">Pronostica la posición final de cada selección dentro de su grupo al concluir la fase de grupos.<br>
-          • <strong style="color:var(--text)">+20 pts</strong> por cada posición acertada exactamente.<br>
-          • La posición debe coincidir exactamente con el resultado oficial del grupo.</span>
+      <div style="background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;line-height:1.8">
+        <strong style="color:var(--dorado)">📋 Sistema de puntos — Posiciones de Grupo:</strong><br>
+        <span style="color:var(--text2)">Las posiciones se calculan <strong style="color:var(--text)">automáticamente</strong> a partir de tus pronósticos de partidos.<br>
+        • <strong style="color:var(--text)">+20 pts</strong> por cada posición acertada exactamente al finalizar la fase de grupos.<br>
+        • Criterios de desempate: puntos → diferencia de goles → goles a favor.</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px" id="grupos-tabs"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="grupos-grid">
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">⚽ Mi pronóstico implícito</div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Calculado desde tus pronósticos de partidos</p>
+          <div id="grupos-mi-tabla"><div class="empty"><div class="empty-icon">⚽</div><p>Sin pronósticos aún</p></div></div>
         </div>
-        <div id="grupos-deadline-banner" style="display:none;margin-bottom:16px"></div>
-        <div id="grupos-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
-        <div id="grupos-content"><div class="empty"><div class="empty-icon">🗂</div><p>Cargando grupos...</p></div></div>
-        <div id="grupos-save-row" style="margin-top:16px;display:none">
-          <button class="btn btn-primary" id="save-grupos-btn">💾 Guardar pronóstico de grupos</button>
-          <span id="grupos-save-txt" style="font-size:13px;color:var(--text2);margin-left:12px"></span>
+        <div class="card" style="margin-bottom:0">
+          <div class="card-title">📋 Resultados oficiales</div>
+          <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Partidos confirmados por el admin</p>
+          <div id="grupos-oficial-tabla"><div class="empty"><div class="empty-icon">📋</div><p>Sin resultados aún</p></div></div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">📊 Pronósticos del grupo</div>
-        <div id="grupos-votos"><div class="empty"><div class="empty-icon">📊</div><p>Selecciona un grupo para ver los pronósticos</p></div></div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-title">👥 Cómo quedan los grupos según todos los jugadores</div>
+        <div id="grupos-votos"><div class="empty"><div class="empty-icon">📊</div><p>Selecciona un grupo arriba</p></div></div>
       </div>
     </div>
 
@@ -477,7 +486,7 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getFirestore(app);
 
-let currentUser=null,currentProfile=null,selectedPodio={1:null,2:null,3:null,4:null},partidos=[],unsubChat=null,fechasLimite={},grupoActivoTab='A',misPronosticosGrupos={};
+let currentUser=null,currentProfile=null,selectedPodio={1:null,2:null,3:null,4:null},partidos=[],unsubChat=null,fechasLimite={},grupoActivoTab='A';
 
 // ===================== DATOS MUNDIALES 2026 =====================
 // 12 grupos × 6 partidos = 72 partidos fase de grupos
@@ -936,184 +945,191 @@ document.querySelectorAll('.tab[data-filter]').forEach(t=>{
   });
 });
 
-// ===================== GRUPOS (PRONOSTICO POSICIONES) =====================
-// State: misPronosticosGrupos[grupo] = [pais1, pais2, pais3, pais4] (ordered = pronóstico del user)
-let gruposState={}; // { A: ['Brasil','Haití',...], ... }
+// ===================== GRUPOS (POSICIONES AUTO-CALCULADAS) =====================
 
-async function loadGrupos(){
-  if(!currentUser)return;
-  const fase="Fase de grupos";
-  const abierto=faseAbierta(fase);
-  const limite=formatLimite(fase);
-
-  // Banner
-  const banner=document.getElementById('grupos-deadline-banner');
-  if(limite){
-    banner.style.display='block';
-    banner.innerHTML=abierto
-      ?`<div style="background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.3);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--verde)">✅ <strong>Abierto</strong> hasta el ${limite}</div>`
-      :`<div style="background:rgba(213,0,0,0.1);border:1px solid rgba(213,0,0,0.3);border-radius:10px;padding:12px 16px;font-size:13px;color:#ff5252">🔒 <strong>Pronósticos de grupos cerrados</strong> desde el ${limite}</div>`;
-  }else{
-    banner.style.display='none';
-  }
-
-  // Load user's saved grupo pronosticos
-  const userSnap=await getDoc(doc(db,'users',currentUser.uid));
-  const userData=userSnap.data()||{};
-  misPronosticosGrupos=userData.pronosticosGrupos||{};
-
-  // Init gruposState from saved or default order
-  const letras=Object.keys(GRUPOS_MUNDIAL);
-  letras.forEach(letra=>{
-    if(misPronosticosGrupos[letra]){
-      gruposState[letra]=[...misPronosticosGrupos[letra]];
-    }else{
-      gruposState[letra]=GRUPOS_MUNDIAL[letra].map(e=>e.pais);
-    }
+function calcularTablaGrupo(letra, resultados) {
+  const equipos = GRUPOS_MUNDIAL[letra];
+  const stats = {};
+  equipos.forEach(e => {
+    stats[e.pais] = { pais: e.pais, flag: e.flag, pts: 0, pj: 0, gf: 0, gc: 0, dg: 0 };
   });
-
-  // Render tabs
-  const tabsEl=document.getElementById('grupos-tabs');
-  tabsEl.innerHTML=letras.map(l=>`<button class="tab ${l===grupoActivoTab?'active':''}" data-grupo="${l}">Grupo ${l}</button>`).join('');
-  tabsEl.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click',()=>{
-      grupoActivoTab=t.dataset.grupo;
-      tabsEl.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
-      renderGrupoContent(grupoActivoTab,abierto);
-      renderGruposVotos(grupoActivoTab);
-    });
+  PARTIDOS_MUNDIAL.filter(p => p.grupo === letra).forEach(p => {
+    const key = p.equipo1 + '_' + p.equipo2;
+    const res = resultados[key];
+    if (!res || res.g1 === undefined || res.g2 === undefined) return;
+    const { g1, g2 } = res;
+    const eq1 = equipos.find(e => p.equipo1.includes(e.pais));
+    const eq2 = equipos.find(e => p.equipo2.includes(e.pais));
+    if (!eq1 || !eq2) return;
+    const s1 = stats[eq1.pais], s2 = stats[eq2.pais];
+    s1.pj++; s2.pj++;
+    s1.gf += g1; s1.gc += g2; s1.dg += (g1 - g2);
+    s2.gf += g2; s2.gc += g1; s2.dg += (g2 - g1);
+    if (g1 > g2) { s1.pts += 3; s2.pts += 0; }
+    else if (g1 < g2) { s2.pts += 3; }
+    else { s1.pts += 1; s2.pts += 1; }
   });
-
-  renderGrupoContent(grupoActivoTab,abierto);
-  renderGruposVotos(grupoActivoTab);
-
-  // Save button
-  const saveRow=document.getElementById('grupos-save-row');
-  saveRow.style.display=abierto?'flex':'none';
+  return Object.values(stats).sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
 }
 
-function renderGrupoContent(letra,abierto){
-  const equipos=gruposState[letra]||GRUPOS_MUNDIAL[letra].map(e=>e.pais);
-  const content=document.getElementById('grupos-content');
-  const posBadges=['pos-1','pos-2','pos-3','pos-4'];
-  const posEmoji=['🥇','🥈','🥉','4️⃣'];
+function renderTablaGrupo(tabla) {
+  if (!tabla || tabla.length === 0) return '<div class="empty"><p>Sin datos</p></div>';
+  const dotClass = ['pos-dot-1','pos-dot-2','pos-dot-3','pos-dot-4'];
+  let html = '<table class="grupo-tabla"><tr><th>#</th><th>Selección</th><th>PJ</th><th>Pts</th><th>DG</th><th>GF</th></tr>';
+  tabla.forEach((e, i) => {
+    const classified = i < 2 ? 'style="background:rgba(0,200,83,0.05)"' : '';
+    html += `<tr ${classified}>
+      <td><span class="pos-dot ${dotClass[i]}">${i+1}</span></td>
+      <td><span style="margin-right:5px">${e.flag}</span>${e.pais}</td>
+      <td style="color:var(--text2)">${e.pj}</td>
+      <td><strong style="color:var(--dorado)">${e.pts}</strong></td>
+      <td style="color:${e.dg>=0?'var(--verde)':'#ff5252'}">${e.dg>=0?'+':''}${e.dg}</td>
+      <td style="color:var(--text2)">${e.gf}</td>
+    </tr>`;
+  });
+  return html + '</table>';
+}
 
-  if(!abierto){
-    // Show read-only order
-    content.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Posiciones pronosticadas para el Grupo ${letra}:</div>`+
-      equipos.map((pais,i)=>{
-        const eq=GRUPOS_MUNDIAL[letra].find(e=>e.pais===pais)||{flag:'🏳'};
-        return`<div class="grupo-equipo-row" style="cursor:default"><div class="grupo-pos-badge ${posBadges[i]}">${posEmoji[i]}</div><span class="grupo-flag">${eq.flag}</span><span class="grupo-name">${pais}</span><span style="font-size:11px;color:var(--text3)">+20 pts si aciertas</span></div>`;
-      }).join('');
+async function loadGrupos() {
+  if (!currentUser) return;
+  const letras = Object.keys(GRUPOS_MUNDIAL);
+  const tabsEl = document.getElementById('grupos-tabs');
+  tabsEl.innerHTML = letras.map(l =>
+    `<button class="tab ${l===grupoActivoTab?'active':''}" data-grupo="${l}">Grupo ${l}</button>`
+  ).join('');
+  tabsEl.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      grupoActivoTab = t.dataset.grupo;
+      tabsEl.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      renderGrupoActivo();
+    });
+  });
+  await renderGrupoActivo();
+}
+
+async function renderGrupoActivo() {
+  const letra = grupoActivoTab;
+  const miTablaEl = document.getElementById('grupos-mi-tabla');
+  const oficialEl = document.getElementById('grupos-oficial-tabla');
+  miTablaEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><p>Calculando...</p></div>';
+  oficialEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><p>Cargando...</p></div>';
+
+  // Load my pronosticos
+  const misResultados = {};
+  if (partidos.length > 0) {
+    const mySnap = await getDocs(query(collection(db, 'pronosticos'), where('userId', '==', currentUser.uid)));
+    const myMap = {};
+    mySnap.forEach(d => { myMap[d.data().partidoId] = d.data(); });
+    partidos.filter(p => p.grupo === letra).forEach(p => {
+      const pr = myMap[p.id];
+      if (!pr) return;
+      misResultados[p.equipo1 + '_' + p.equipo2] = { g1: pr.goles1, g2: pr.goles2 };
+    });
+  }
+
+  const pronCount = Object.keys(misResultados).length;
+  if (pronCount === 0) {
+    miTablaEl.innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Aún no tienes pronósticos en este grupo.<br><span style="font-size:11px">Ve a ⚽ Pronosticar para ingresar tus marcadores.</span></p></div>';
+  } else {
+    const miTabla = calcularTablaGrupo(letra, misResultados);
+    const parcial = pronCount < 6 ? `<p style="font-size:11px;color:var(--text3);margin-bottom:8px">${pronCount}/6 partidos pronosticados</p>` : '';
+    miTablaEl.innerHTML = parcial + renderTablaGrupo(miTabla);
+  }
+
+  // Resultados oficiales
+  const oficialResultados = {};
+  partidos.filter(p => p.grupo === letra && p.jugado).forEach(p => {
+    oficialResultados[p.equipo1 + '_' + p.equipo2] = { g1: p.goles1, g2: p.goles2 };
+  });
+  const oficialCount = Object.keys(oficialResultados).length;
+
+  if (oficialCount === 0) {
+    oficialEl.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Aún no hay resultados oficiales en este grupo</p></div>';
+  } else {
+    const oficialTabla = calcularTablaGrupo(letra, oficialResultados);
+    const parcialOf = oficialCount < 6 ? `<p style="font-size:11px;color:var(--text3);margin-bottom:8px">${oficialCount}/6 partidos jugados</p>` : '';
+    let html = parcialOf + renderTablaGrupo(oficialTabla);
+    // Show comparison if both complete
+    if (pronCount >= 6 && oficialCount >= 6) {
+      const miTabla = calcularTablaGrupo(letra, misResultados);
+      const miPaises = miTabla.map(e => e.pais);
+      const ofPaises = oficialTabla.map(e => e.pais);
+      let aciertos = 0;
+      miPaises.forEach((p, i) => { if (p === ofPaises[i]) aciertos++; });
+      html += `<div style="background:rgba(255,214,0,0.08);border:1px solid rgba(255,214,0,0.25);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px">
+        🎯 Acertaste <strong style="color:var(--dorado)">${aciertos}/4</strong> posiciones → <strong style="color:var(--dorado)">+${aciertos*20} pts</strong>
+      </div>`;
+    }
+    oficialEl.innerHTML = html;
+  }
+
+  await renderGruposVotos(letra);
+}
+
+async function renderGruposVotos(letra) {
+  const el = document.getElementById('grupos-votos');
+  el.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><p>Cargando...</p></div>';
+  const partidosOficiales = partidos.filter(p => p.grupo === letra);
+  if (partidosOficiales.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><p>Sin partidos cargados para este grupo</p></div>';
+    return;
+  }
+  const partidoIds = partidosOficiales.map(p => p.id);
+  const pronsSnap = await getDocs(query(collection(db, 'pronosticos'), where('partidoId', 'in', partidoIds)));
+  // Group by user
+  const byUser = {};
+  pronsSnap.forEach(d => {
+    const pr = d.data();
+    if (!byUser[pr.userId]) byUser[pr.userId] = { nombre: pr.nombre, resultados: {} };
+    const partido = partidosOficiales.find(p => p.id === pr.partidoId);
+    if (!partido) return;
+    byUser[pr.userId].resultados[partido.equipo1 + '_' + partido.equipo2] = { g1: pr.goles1, g2: pr.goles2 };
+  });
+
+  const usuarios = Object.entries(byUser);
+  if (usuarios.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><p>Nadie ha pronosticado partidos del Grupo ${letra} aún</p></div>`;
     return;
   }
 
-  content.innerHTML=`<div style="font-size:13px;color:var(--text2);margin-bottom:12px">Arrastra para ordenar los equipos del Grupo ${letra} según cómo crees que terminarán:</div>`+
-    `<div id="drag-list-${letra}">` +
-    equipos.map((pais,i)=>{
-      const eq=GRUPOS_MUNDIAL[letra].find(e=>e.pais===pais)||{flag:'🏳'};
-      return`<div class="grupo-equipo-row" draggable="true" data-pais="${pais}" data-grupo="${letra}">
-        <div class="grupo-pos-badge ${posBadges[i]}">${posEmoji[i]}</div>
-        <span class="grupo-flag">${eq.flag}</span>
-        <span class="grupo-name">${pais}</span>
-        <span class="drag-hint">⠿ arrastrar</span>
-      </div>`;
-    }).join('') +
-    `</div>`;
-
-  // Drag & drop
-  initDragDrop(letra);
-}
-
-function initDragDrop(letra){
-  const list=document.getElementById(`drag-list-${letra}`);
-  if(!list)return;
-  let dragged=null;
-  list.querySelectorAll('.grupo-equipo-row').forEach(row=>{
-    row.addEventListener('dragstart',()=>{dragged=row;row.classList.add('dragging');});
-    row.addEventListener('dragend',()=>{row.classList.remove('dragging');dragged=null;updateGrupoState(letra);});
-    row.addEventListener('dragover',e=>{e.preventDefault();if(dragged&&dragged!==row){row.classList.add('drag-over');}});
-    row.addEventListener('dragleave',()=>row.classList.remove('drag-over'));
-    row.addEventListener('drop',e=>{
-      e.preventDefault();
-      row.classList.remove('drag-over');
-      if(dragged&&dragged!==row){
-        const rows=[...list.querySelectorAll('.grupo-equipo-row')];
-        const fromIdx=rows.indexOf(dragged);
-        const toIdx=rows.indexOf(row);
-        if(fromIdx<toIdx) list.insertBefore(dragged,row.nextSibling);
-        else list.insertBefore(dragged,row);
-        updateGrupoState(letra);
-        refreshPosBadges(letra);
-      }
+  // Tally predicted positions
+  const votosPorPos = { 1:{}, 2:{}, 3:{}, 4:{} };
+  let totalUsers = 0;
+  usuarios.forEach(([, u]) => {
+    if (Object.keys(u.resultados).length === 0) return;
+    const tabla = calcularTablaGrupo(letra, u.resultados);
+    tabla.forEach((e, i) => {
+      const pos = i + 1;
+      votosPorPos[pos][e.pais] = (votosPorPos[pos][e.pais] || 0) + 1;
     });
+    totalUsers++;
   });
-}
 
-function updateGrupoState(letra){
-  const list=document.getElementById(`drag-list-${letra}`);
-  if(!list)return;
-  gruposState[letra]=[...list.querySelectorAll('.grupo-equipo-row')].map(r=>r.dataset.pais);
-}
+  if (totalUsers === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📊</div><p>Nadie tiene pronósticos en el Grupo ${letra} aún</p></div>`;
+    return;
+  }
 
-function refreshPosBadges(letra){
-  const list=document.getElementById(`drag-list-${letra}`);
-  if(!list)return;
-  const posBadges=['pos-1','pos-2','pos-3','pos-4'];
-  const posEmoji=['🥇','🥈','🥉','4️⃣'];
-  list.querySelectorAll('.grupo-equipo-row').forEach((row,i)=>{
-    const badge=row.querySelector('.grupo-pos-badge');
-    badge.className=`grupo-pos-badge ${posBadges[i]}`;
-    badge.textContent=posEmoji[i];
-  });
-}
-
-document.getElementById('save-grupos-btn')?.addEventListener('click',async()=>{
-  if(!currentUser)return;
-  const txt=document.getElementById('grupos-save-txt');
-  try{
-    // Sync current drag state
-    Object.keys(GRUPOS_MUNDIAL).forEach(letra=>updateGrupoState(letra));
-    await updateDoc(doc(db,'users',currentUser.uid),{pronosticosGrupos:gruposState});
-    misPronosticosGrupos={...gruposState};
-    txt.textContent='✅ Pronósticos de grupos guardados';
-    txt.style.color='var(--verde)';
-    showToast('Pronósticos de grupos guardados 🗂');
-  }catch(e){showToast('Error al guardar',false);txt.textContent='Error: '+e.message;txt.style.color='#ff5252';}
-});
-
-async function renderGruposVotos(letra){
-  const el=document.getElementById('grupos-votos');
-  // Load all users' grupo pronosticos for this group
-  const snap=await getDocs(collection(db,'users'));
-  const votos={1:{},2:{},3:{},4:{}}; // pos -> { pais: count }
-  let total=0;
-  snap.forEach(d=>{
-    const u=d.data();
-    if(!u.pronosticosGrupos||!u.pronosticosGrupos[letra])return;
-    total++;
-    u.pronosticosGrupos[letra].forEach((pais,i)=>{
-      const pos=i+1;
-      votos[pos][pais]=(votos[pos][pais]||0)+1;
+  const equipos = GRUPOS_MUNDIAL[letra];
+  const dotClass = ['pos-dot-1','pos-dot-2','pos-dot-3','pos-dot-4'];
+  let html = `<p style="font-size:12px;color:var(--text2);margin-bottom:12px">${totalUsers} jugador${totalUsers!==1?'es':''} con pronósticos en Grupo ${letra}</p>`;
+  html += `<table class="grupo-tabla"><tr><th>Selección</th>`;
+  [1,2,3,4].forEach(pos => { html += `<th><span class="pos-dot ${dotClass[pos-1]}">${pos}</span></th>`; });
+  html += `</tr>`;
+  equipos.forEach(eq => {
+    html += `<tr><td>${eq.flag} ${eq.pais}</td>`;
+    [1,2,3,4].forEach(pos => {
+      const cnt = votosPorPos[pos][eq.pais] || 0;
+      const pct = totalUsers > 0 ? Math.round(cnt / totalUsers * 100) : 0;
+      html += `<td>${cnt > 0 ? `<strong>${cnt}</strong><br><span style="font-size:10px;color:var(--text3)">${pct}%</span>` : '<span style="color:var(--text3)">—</span>'}</td>`;
     });
+    html += `</tr>`;
   });
-  if(total===0){el.innerHTML=`<div class="empty"><div class="empty-icon">📊</div><p>Nadie ha pronosticado el Grupo ${letra} aún</p></div>`;return;}
-  const equipos=GRUPOS_MUNDIAL[letra];
-  let html=`<div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--text)">Grupo ${letra} — ${total} pronóstico${total!==1?'s':''}</div>`;
-  html+=`<table><tr><th>Selección</th><th>🥇 1°</th><th>🥈 2°</th><th>🥉 3°</th><th>4️⃣ 4°</th></tr>`;
-  equipos.forEach(eq=>{
-    html+=`<tr><td>${eq.flag} ${eq.pais}</td>`;
-    [1,2,3,4].forEach(pos=>{
-      const cnt=votos[pos][eq.pais]||0;
-      const pct=total>0?Math.round(cnt/total*100):0;
-      html+=`<td>${cnt>0?`<strong>${cnt}</strong> <span style="font-size:10px;color:var(--text3)">(${pct}%)</span>`:'-'}</td>`;
-    });
-    html+=`</tr>`;
-  });
-  html+=`</table>`;
-  el.innerHTML=html;
+  html += `</table>`;
+  el.innerHTML = html;
 }
+
 
 // ===================== CAMPEON / PODIO =====================
 async function loadCampeon(){
