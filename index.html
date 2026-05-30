@@ -110,13 +110,13 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .chat-input-row input{flex:1;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);font-family:'Outfit',sans-serif}
 .chat-input-row input:focus{outline:none;border-color:var(--dorado)}
 .chat-send{width:44px;height:44px;background:var(--dorado);border:none;border-radius:10px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.champ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.champ-card{background:var(--card2);border:2px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all 0.2s}
-.champ-card:hover{border-color:rgba(255,214,0,0.3);background:var(--card)}
-.champ-card.selected{border-color:var(--dorado);background:rgba(255,214,0,0.08)}
-.champ-flag{font-size:28px;margin-bottom:6px;display:block}
-.champ-name{font-size:12px;font-weight:600;color:var(--text)}
-.champ-votes{font-size:11px;color:var(--text2);margin-top:2px}
+.champ-grid{display:flex;flex-direction:column;gap:6px}
+.champ-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card2);border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:all 0.2s}
+.champ-bar:hover{border-color:rgba(255,214,0,0.3);background:rgba(255,255,255,0.03)}
+.champ-bar.selected{border-color:var(--dorado);background:rgba(255,214,0,0.07)}
+.champ-flag{font-size:22px;flex-shrink:0}
+.champ-name{font-size:14px;font-weight:600;color:var(--text);flex:1}
+.champ-votes{font-size:11px;color:var(--text2);margin-left:auto;white-space:nowrap}
 .admin-badge{background:rgba(213,0,0,0.2);color:#ff5252;border:1px solid rgba(213,0,0,0.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
 .deadline-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;flex-wrap:wrap}
 .deadline-fase-name{flex:1;min-width:160px;font-size:14px;font-weight:600}
@@ -217,7 +217,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     <div class="section active" id="dashboard">
       <div class="metric-grid">
         <div class="metric"><div class="metric-val" id="m-jugadores">—</div><div class="metric-label">Jugadores</div></div>
-        <div class="metric"><div class="metric-val" id="m-partidos">48</div><div class="metric-label">Partidos</div></div>
+        <div class="metric"><div class="metric-val" id="m-partidos">72</div><div class="metric-label">Partidos</div></div>
         <div class="metric"><div class="metric-val" id="m-jugados">0</div><div class="metric-label">Jugados</div></div>
         <div class="metric"><div class="metric-val" id="m-mis-pts">0</div><div class="metric-label">Mis puntos</div></div>
       </div>
@@ -234,8 +234,6 @@ tr:hover td{background:rgba(255,255,255,0.02)}
     <div class="section" id="pronosticar">
       <div class="card">
         <div class="card-title">⚽ Pronosticar partidos</div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Tienes hasta <strong style="color:var(--dorado)">24 horas antes</strong> de cada partido para pronosticar.</p>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Tu pronóstico se hace público solo cuando el partido termina.</p>
         <div id="pronosticos-lista"><div class="empty"><div class="empty-icon">⚽</div><p>Cargando partidos disponibles...</p></div></div>
       </div>
       <div class="card">
@@ -466,8 +464,12 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       <div class="card">
         <div class="card-title">⚙️ Inicializar partidos del mundial <span class="admin-badge">ADMIN</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Carga los 72 partidos de la fase de grupos con fechas y horarios oficiales (hora Ecuador).</p>
-        <button class="btn btn-primary" id="seed-partidos-btn">🌐 Cargar 72 partidos del Mundial 2026</button>
-        <div id="seed-status" style="margin-top:12px;font-size:13px;color:var(--text2)"></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">⚠️ Si ya cargaste partidos antes, primero bórralos y luego vuelve a cargar.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+          <button class="btn btn-primary" id="seed-partidos-btn">🌐 Cargar 72 partidos del Mundial 2026</button>
+          <button class="btn" id="delete-partidos-btn" style="color:#ff5252;border-color:rgba(213,0,0,0.3)">🗑 Borrar todos los partidos</button>
+        </div>
+        <div id="seed-status" style="margin-top:4px;font-size:13px;color:var(--text2)"></div>
       </div>
     </div>
 
@@ -972,12 +974,20 @@ function calcularTablaGrupo(letra, resultados) {
   return Object.values(stats).sort((a, b) => b.pts - a.pts || b.dg - a.dg || b.gf - a.gf);
 }
 
-function renderTablaGrupo(tabla) {
+function renderTablaGrupo(tabla, oficialPaises) {
   if (!tabla || tabla.length === 0) return '<div class="empty"><p>Sin datos</p></div>';
   const dotClass = ['pos-dot-1','pos-dot-2','pos-dot-3','pos-dot-4'];
-  let html = '<table class="grupo-tabla"><tr><th>#</th><th>Selección</th><th>PJ</th><th>Pts</th><th>DG</th><th>GF</th></tr>';
+  const showPts = oficialPaises && oficialPaises.length === 4;
+  let html = `<table class="grupo-tabla"><tr><th>#</th><th>Selección</th><th>PJ</th><th>Pts</th><th>DG</th><th>GF</th>${showPts?'<th>🎯</th>':''}</tr>`;
   tabla.forEach((e, i) => {
     const classified = i < 2 ? 'style="background:rgba(0,200,83,0.05)"' : '';
+    let ptsCol = '';
+    if (showPts) {
+      const acierto = oficialPaises[i] === e.pais;
+      ptsCol = acierto
+        ? `<td><span class="badge b-green" style="font-size:10px">+20</span></td>`
+        : `<td><span style="color:var(--text3);font-size:11px">—</span></td>`;
+    }
     html += `<tr ${classified}>
       <td><span class="pos-dot ${dotClass[i]}">${i+1}</span></td>
       <td><span style="margin-right:5px">${e.flag}</span>${e.pais}</td>
@@ -985,6 +995,7 @@ function renderTablaGrupo(tabla) {
       <td><strong style="color:var(--dorado)">${e.pts}</strong></td>
       <td style="color:${e.dg>=0?'var(--verde)':'#ff5252'}">${e.dg>=0?'+':''}${e.dg}</td>
       <td style="color:var(--text2)">${e.gf}</td>
+      ${ptsCol}
     </tr>`;
   });
   return html + '</table>';
@@ -1015,7 +1026,7 @@ async function renderGrupoActivo() {
   miTablaEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><p>Calculando...</p></div>';
   oficialEl.innerHTML = '<div class="empty"><div class="empty-icon">⏳</div><p>Cargando...</p></div>';
 
-  // Load my pronosticos
+  // Load my pronosticos for this group
   const misResultados = {};
   if (partidos.length > 0) {
     const mySnap = await getDocs(query(collection(db, 'pronosticos'), where('userId', '==', currentUser.uid)));
@@ -1028,40 +1039,57 @@ async function renderGrupoActivo() {
     });
   }
 
-  const pronCount = Object.keys(misResultados).length;
-  if (pronCount === 0) {
-    miTablaEl.innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Aún no tienes pronósticos en este grupo.<br><span style="font-size:11px">Ve a ⚽ Pronosticar para ingresar tus marcadores.</span></p></div>';
-  } else {
-    const miTabla = calcularTablaGrupo(letra, misResultados);
-    const parcial = pronCount < 6 ? `<p style="font-size:11px;color:var(--text3);margin-bottom:8px">${pronCount}/6 partidos pronosticados</p>` : '';
-    miTablaEl.innerHTML = parcial + renderTablaGrupo(miTabla);
-  }
-
   // Resultados oficiales
   const oficialResultados = {};
   partidos.filter(p => p.grupo === letra && p.jugado).forEach(p => {
     oficialResultados[p.equipo1 + '_' + p.equipo2] = { g1: p.goles1, g2: p.goles2 };
   });
-  const oficialCount = Object.keys(oficialResultados).length;
 
+  const pronCount = Object.keys(misResultados).length;
+  const oficialCount = Object.keys(oficialResultados).length;
+  const oficialTabla = oficialCount > 0 ? calcularTablaGrupo(letra, oficialResultados) : null;
+  const oficialPaises = oficialCount >= 6 ? oficialTabla.map(e => e.pais) : null;
+
+  // --- MI PRONÓSTICO ---
+  if (pronCount === 0) {
+    miTablaEl.innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Aún no tienes pronósticos en este grupo.<br><span style="font-size:11px">Ve a ⚽ Pronosticar para ingresar tus marcadores.</span></p></div>';
+  } else {
+    const miTabla = calcularTablaGrupo(letra, misResultados);
+    const miPaises = miTabla.map(e => e.pais);
+    const parcialNote = pronCount < 6 ? `<p style="font-size:11px;color:var(--text3);margin-bottom:8px">⚠️ ${pronCount}/6 partidos pronosticados — tabla parcial</p>` : '';
+
+    // If official is complete, show points earned per position
+    let aciertos = 0;
+    if (oficialPaises) {
+      miPaises.forEach((p, i) => { if (p === oficialPaises[i]) aciertos++; });
+    }
+
+    let html = parcialNote + renderTablaGrupo(miTabla, oficialPaises);
+
+    // Summary banner
+    if (oficialPaises) {
+      const color = aciertos > 0 ? 'rgba(0,200,83,0.1)' : 'rgba(255,255,255,0.04)';
+      const border = aciertos > 0 ? 'rgba(0,200,83,0.3)' : 'var(--border)';
+      html += `<div style="background:${color};border:1px solid ${border};border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">${aciertos>0?'🎯':'😔'}</span>
+        <div>Acertaste <strong style="color:var(--dorado)">${aciertos}/4</strong> posiciones del Grupo ${letra}
+        <br><strong style="color:var(--verde)">+${aciertos*20} pts</strong> por posiciones de grupo</div>
+      </div>`;
+    } else if (pronCount > 0) {
+      // Preview: show potential points
+      html += `<div style="background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.2);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;color:var(--text2)">
+        💡 Puedes ganar hasta <strong style="color:var(--dorado)">80 pts</strong> si aciertas las 4 posiciones de este grupo
+      </div>`;
+    }
+    miTablaEl.innerHTML = html;
+  }
+
+  // --- RESULTADOS OFICIALES ---
   if (oficialCount === 0) {
     oficialEl.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><p>Aún no hay resultados oficiales en este grupo</p></div>';
   } else {
-    const oficialTabla = calcularTablaGrupo(letra, oficialResultados);
     const parcialOf = oficialCount < 6 ? `<p style="font-size:11px;color:var(--text3);margin-bottom:8px">${oficialCount}/6 partidos jugados</p>` : '';
-    let html = parcialOf + renderTablaGrupo(oficialTabla);
-    // Show comparison if both complete
-    if (pronCount >= 6 && oficialCount >= 6) {
-      const miTabla = calcularTablaGrupo(letra, misResultados);
-      const miPaises = miTabla.map(e => e.pais);
-      const ofPaises = oficialTabla.map(e => e.pais);
-      let aciertos = 0;
-      miPaises.forEach((p, i) => { if (p === ofPaises[i]) aciertos++; });
-      html += `<div style="background:rgba(255,214,0,0.08);border:1px solid rgba(255,214,0,0.25);border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px">
-        🎯 Acertaste <strong style="color:var(--dorado)">${aciertos}/4</strong> posiciones → <strong style="color:var(--dorado)">+${aciertos*20} pts</strong>
-      </div>`;
-    }
-    oficialEl.innerHTML = html;
+    oficialEl.innerHTML = parcialOf + renderTablaGrupo(oficialTabla, null);
   }
 
   await renderGruposVotos(letra);
@@ -1162,10 +1190,11 @@ async function loadCampeon(){
       const cnt=votos[num][s.pais]||0;
       const isSel=selectedPodio[num]===s.pais;
       const usedElsewhere=Object.entries(selectedPodio).some(([k,v])=>parseInt(k)!==num&&v===s.pais);
-      return`<div class="champ-card ${isSel?'selected':''}" data-pais="${s.pais}" data-pos="${num}" style="${usedElsewhere?'opacity:0.35;pointer-events:none;':''}">
+      return`<div class="champ-bar ${isSel?'selected':''}" data-pais="${s.pais}" data-pos="${num}" style="${usedElsewhere?'opacity:0.3;pointer-events:none;':''}">
         <span class="champ-flag">${s.flag}</span>
-        <div class="champ-name">${s.pais}</div>
-        <div class="champ-votes">${cnt} voto${cnt!==1?'s':''}</div>
+        <span class="champ-name">${s.pais}</span>
+        ${isSel?'<span class="badge b-green" style="font-size:11px">✓ Seleccionado</span>':''}
+        <span class="champ-votes">${cnt>0?cnt+' voto'+(cnt!==1?'s':''):''}</span>
       </div>`;
     }).join('');
     const badge=document.getElementById('selected-p'+num+'-badge');
@@ -1173,7 +1202,7 @@ async function loadCampeon(){
       const sel=selecciones.find(s=>s.pais===selectedPodio[num]);
       badge.innerHTML=sel?`<span class="badge b-green">${sel.flag} ${sel.pais}</span>`:'<span class="badge b-gray">Sin selección</span>';
     }
-    grid.querySelectorAll('.champ-card').forEach(c=>{
+    grid.querySelectorAll('.champ-bar').forEach(c=>{
       c.addEventListener('click',()=>{
         selectedPodio[parseInt(c.dataset.pos)]=c.dataset.pais;
         loadCampeon();
@@ -1351,7 +1380,14 @@ document.getElementById('confirmar-podio-btn').addEventListener('click',async()=
 document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('seed-partidos-btn');
   const status=document.getElementById('seed-status');
-  btn.disabled=true;btn.textContent='⏳ Cargando...';
+  // Check for existing partidos first
+  const existing=await getDocs(collection(db,'partidos'));
+  if(existing.size>0){
+    status.textContent=`⚠️ Ya existen ${existing.size} partidos. Bórralos primero con el botón rojo.`;
+    status.style.color='#ff5252';
+    return;
+  }
+  btn.disabled=true;btn.textContent='⏳ Cargando...';status.style.color='var(--text2)';
   try{
     let count=0;
     for(const p of PARTIDOS_MUNDIAL){
@@ -1368,6 +1404,29 @@ document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
     status.textContent=`✅ ${PARTIDOS_MUNDIAL.length} partidos del Mundial 2026 cargados correctamente.`;
     btn.textContent='✅ Ya cargados';
   }catch(e){showToast('Error: '+e.message,false);btn.disabled=false;btn.textContent='🌐 Cargar 72 partidos';}
+});
+
+document.getElementById('delete-partidos-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('delete-partidos-btn');
+  const status=document.getElementById('seed-status');
+  const snap=await getDocs(collection(db,'partidos'));
+  if(snap.size===0){status.textContent='No hay partidos que borrar.';return;}
+  if(!confirm(`⚠️ ¿Seguro que quieres borrar los ${snap.size} partidos? Esta acción no se puede deshacer.`))return;
+  btn.disabled=true;btn.textContent='⏳ Borrando...';status.style.color='#ff5252';
+  try{
+    let count=0;
+    for(const d of snap.docs){
+      await deleteDoc(doc(db,'partidos',d.id));
+      count++;
+      status.textContent=`Borrando... ${count}/${snap.size}`;
+    }
+    showToast('Todos los partidos eliminados 🗑');
+    status.textContent=`✅ ${snap.size} partidos eliminados. Ahora puedes cargar los 72 correctos.`;
+    status.style.color='var(--verde)';
+    btn.disabled=false;btn.textContent='🗑 Borrar todos los partidos';
+    document.getElementById('seed-partidos-btn').disabled=false;
+    document.getElementById('seed-partidos-btn').textContent='🌐 Cargar 72 partidos del Mundial 2026';
+  }catch(e){showToast('Error: '+e.message,false);btn.disabled=false;btn.textContent='🗑 Borrar todos los partidos';}
 });
 </script>
 </body>
