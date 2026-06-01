@@ -614,13 +614,24 @@ function getInitials(n){if(!n)return'??';return n.split(' ').map(w=>w[0]).join('
 function formatDate(ts){if(!ts)return'—';const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('es-EC',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});}
 function horasRestantes(ts){if(!ts)return 999;const d=ts.toDate?ts.toDate():new Date(ts);return(d-Date.now())/3600000;}
 
-function calcularPuntos(p1,p2,r1,r2,fase){
+const FASES_ELIMINATORIAS=["Dieciseisavos","Octavos de final","Cuartos de final","Semifinal","Final"];
+
+function calcularPuntos(p1,p2,r1,r2,fase,ganadorPron,ganadorReal){
   const pts=PUNTOS_FASE[fase]||PUNTOS_FASE["Fase de grupos"];
-  const resP=p1>p2?1:p1<p2?-1:0;
-  const resR=r1>r2?1:r1<r2?-1:0;
+  const esElim=FASES_ELIMINATORIAS.includes(fase);
   let total=0;
-  if(resP===resR)total+=pts.resultado;
-  if(p1===r1&&p2===r2)total+=pts.marcador;
+  if(esElim){
+    // Ganador: si no hay empate se deduce del marcador, si hay empate se usa el campo ganador
+    const ganadorR=r1!==r2?(r1>r2?'equipo1':'equipo2'):ganadorReal;
+    const ganadorP=p1!==p2?(p1>p2?'equipo1':'equipo2'):ganadorPron;
+    if(ganadorP&&ganadorR&&ganadorP===ganadorR)total+=pts.resultado;
+    if(p1===r1&&p2===r2)total+=pts.marcador;
+  }else{
+    const resP=p1>p2?1:p1<p2?-1:0;
+    const resR=r1>r2?1:r1<r2?-1:0;
+    if(resP===resR)total+=pts.resultado;
+    if(p1===r1&&p2===r2)total+=pts.marcador;
+  }
   return total;
 }
 
@@ -836,6 +847,24 @@ async function loadPronosticar(){
       ps.forEach(p=>{
         const ya=myProns[p.id];
         const pts=PUNTOS_FASE[p.fase]||PUNTOS_FASE["Fase de grupos"];
+        const esElimP=FASES_ELIMINATORIAS.includes(p.fase);
+        const flag1p=p.equipo1.split(' ')[0];
+        const flag2p=p.equipo2.split(' ')[0];
+        const nom1p=p.equipo1.split(' ').slice(1).join(' ');
+        const nom2p=p.equipo2.split(' ').slice(1).join(' ');
+        const ganGuardado=ya?.ganador||'';
+        const ganadorSel=esElimP?`
+          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px">
+            <div style="font-size:12px;color:var(--dorado);font-weight:700;margin-bottom:8px">⚽ Si hay empate en 90', ¿quién gana en penales?</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                <input type="radio" name="ganador-${p.id}" id="gan1-${p.id}" value="equipo1" ${ganGuardado==='equipo1'?'checked':''}> ${flag1p} ${nom1p}
+              </label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                <input type="radio" name="ganador-${p.id}" id="gan2-${p.id}" value="equipo2" ${ganGuardado==='equipo2'?'checked':''}> ${flag2p} ${nom2p}
+              </label>
+            </div>
+          </div>`:'';
         html+=`<div class="prono-card">
           <div class="prono-header">
             <div>
@@ -844,14 +873,15 @@ async function loadPronosticar(){
             </div>
           </div>
           <div class="prono-score-row">
-            <div class="prono-team"><span class="prono-flag">${p.equipo1.split(' ')[0]}</span><span>${p.equipo1.split(' ').slice(1).join(' ')}</span></div>
+            <div class="prono-team"><span class="prono-flag">${flag1p}</span><span>${nom1p}</span></div>
             <input type="number" class="prono-input" id="g1-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles1:''}" placeholder="0">
             <span class="prono-vs">—</span>
             <input type="number" class="prono-input" id="g2-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles2:''}" placeholder="0">
-            <div class="prono-team"><span class="prono-flag">${p.equipo2.split(' ')[0]}</span><span>${p.equipo2.split(' ').slice(1).join(' ')}</span></div>
+            <div class="prono-team"><span class="prono-flag">${flag2p}</span><span>${nom2p}</span></div>
           </div>
+          ${ganadorSel}
           <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
-            <button class="btn btn-primary" onclick="guardarPronostico('${p.id}')">💾 ${ya!==undefined?'Actualizar':'Guardar'}</button>
+            <button class="btn btn-primary" onclick="guardarPronostico('${p.id}',${esElimP})">💾 ${ya!==undefined?'Actualizar':'Guardar'}</button>
             ${ya!==undefined?'<span class="badge b-green">✓ Guardado</span>':''}
           </div>
         </div>`;
@@ -875,16 +905,22 @@ async function loadPronosticar(){
     let ptsStr='<span class="badge b-gray">—</span>';
     if(p.jugado&&p.goles1!==undefined){
       resStr=`${p.goles1} - ${p.goles2}`;
-      const pts=calcularPuntos(pr.goles1,pr.goles2,p.goles1,p.goles2,p.fase);
+      const pts=calcularPuntos(pr.goles1,pr.goles2,p.goles1,p.goles2,p.fase,pr.ganador,p.ganador);
       ptsStr=`<span class="badge ${pts>0?'b-green':'b-red'}">+${pts}</span>`;
     }
-    html+=`<tr><td>${p.equipo1} vs ${p.equipo2}</td><td><strong>${pr.goles1} - ${pr.goles2}</strong></td><td>${p.jugado?resStr:'<span class="badge b-gray">No iniciado</span>'}</td><td>${p.jugado?ptsStr:'—'}</td></tr>`;
+    const esElimT=FASES_ELIMINATORIAS.includes(p.fase);
+    let ganMio='';
+    if(esElimT&&pr.ganador){
+      const nomGan=pr.ganador==='equipo1'?p.equipo1.split(' ').slice(1).join(' '):p.equipo2.split(' ').slice(1).join(' ');
+      ganMio=` <span style="font-size:11px;color:var(--dorado)">🏆 ${nomGan}</span>`;
+    }
+    html+=`<tr><td>${p.equipo1} vs ${p.equipo2}</td><td><strong>${pr.goles1} - ${pr.goles2}</strong>${ganMio}</td><td>${p.jugado?resStr:'<span class="badge b-gray">No iniciado</span>'}</td><td>${p.jugado?ptsStr:'—'}</td></tr>`;
   }
   html+='</table>';
   guardadosEl.innerHTML=html;
 }
 
-window.guardarPronostico=async function(partidoId){
+window.guardarPronostico=async function(partidoId,esElim=false){
   // Check deadline before saving
   const partido=partidos.find(p=>p.id===partidoId);
   if(partido&&!faseAbierta(partido.fase)){showToast('Los pronósticos de esta fase están cerrados 🔒',false);return;}
@@ -893,9 +929,20 @@ window.guardarPronostico=async function(partidoId){
   if(g1v===''||g2v===''){showToast('Ingresa ambos marcadores',false);return;}
   const g1=parseInt(g1v),g2=parseInt(g2v);
   if(isNaN(g1)||isNaN(g2)||g1<0||g2<0){showToast('Marcadores inválidos',false);return;}
+  let ganador='';
+  if(esElim){
+    if(g1===g2){
+      const gan1=document.getElementById('gan1-'+partidoId)?.checked;
+      const gan2=document.getElementById('gan2-'+partidoId)?.checked;
+      if(!gan1&&!gan2){showToast('Hay empate: debes elegir quién gana en penales 🥅',false);return;}
+      ganador=gan1?'equipo1':'equipo2';
+    }else{
+      ganador=g1>g2?'equipo1':'equipo2';
+    }
+  }
   try{
     const ref=doc(db,'pronosticos',currentUser.uid+'_'+partidoId);
-    await setDoc(ref,{userId:currentUser.uid,partidoId,goles1:g1,goles2:g2,nombre:currentProfile.nombre,timestamp:serverTimestamp()});
+    await setDoc(ref,{userId:currentUser.uid,partidoId,goles1:g1,goles2:g2,ganador,nombre:currentProfile.nombre,timestamp:serverTimestamp()});
     showToast('Pronóstico guardado 🎯');
     loadPronosticar();
   }catch(e){showToast('Error al guardar',false);}
@@ -1285,17 +1332,37 @@ async function loadAdmin(){
   const pendientes=partidos.filter(p=>!p.jugado);
   const partidosEl=document.getElementById('admin-partidos-list');
   if(pendientes.length===0){partidosEl.innerHTML='<div class="empty"><p>No hay partidos pendientes</p></div>';return;}
-  partidosEl.innerHTML=pendientes.map(p=>`
-    <div class="match-item">
-      <div class="match-teams">
-        <div class="match-name">${p.equipo1} vs ${p.equipo2} <span class="grupo-tag">Grupo ${p.grupo}</span></div>
+  partidosEl.innerHTML=pendientes.map(p=>{
+    const esElimA=FASES_ELIMINATORIAS.includes(p.fase);
+    const flag1a=p.equipo1.split(' ')[0];
+    const flag2a=p.equipo2.split(' ')[0];
+    const nom1a=p.equipo1.split(' ').slice(1).join(' ');
+    const nom2a=p.equipo2.split(' ').slice(1).join(' ');
+    const etiqueta=p.grupo?`<span class="grupo-tag">Grupo ${p.grupo}</span>`:`<span class="grupo-tag">${p.fase}</span>`;
+    const ganSel=esElimA?`
+      <div style="margin-top:8px;padding:8px 12px;background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:8px;width:100%">
+        <span style="font-size:12px;color:var(--dorado);font-weight:700">⚽ Ganador (si empate en 90'):</span>
+        <label style="margin-left:12px;font-size:13px;cursor:pointer">
+          <input type="radio" name="adm-gan-${p.id}" id="adm-gan1-${p.id}" value="equipo1"> ${flag1a} ${nom1a}
+        </label>
+        <label style="margin-left:12px;font-size:13px;cursor:pointer">
+          <input type="radio" name="adm-gan-${p.id}" id="adm-gan2-${p.id}" value="equipo2"> ${flag2a} ${nom2a}
+        </label>
+      </div>`:'';
+    return`<div class="match-item" style="flex-wrap:wrap;gap:8px">
+      <div class="match-teams" style="width:100%">
+        <div class="match-name">${p.equipo1} vs ${p.equipo2} ${etiqueta}</div>
         <div class="match-meta">${formatDate(p.fecha)}</div>
       </div>
-      <input type="number" id="res1-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado)">
-      <span style="font-size:18px;color:var(--text3)">—</span>
-      <input type="number" id="res2-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado)">
-      <button class="btn btn-success" onclick="confirmarResultado('${p.id}','${p.fase}')">✅ Confirmar</button>
-    </div>`).join('');
+      <div style="display:flex;align-items:center;gap:8px">
+        <input type="number" id="res1-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado)">
+        <span style="font-size:18px;color:var(--text3)">—</span>
+        <input type="number" id="res2-${p.id}" min="0" max="20" placeholder="0" style="width:52px;text-align:center;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado)">
+        <button class="btn btn-success" onclick="confirmarResultado('${p.id}','${p.fase}')">✅ Confirmar</button>
+      </div>
+      ${ganSel}
+    </div>`;
+  }).join('');
 }
 
 document.getElementById('create-user-btn').addEventListener('click',async()=>{
@@ -1319,14 +1386,26 @@ window.confirmarResultado=async function(partidoId,fase){
   const g1=parseInt(document.getElementById('res1-'+partidoId)?.value);
   const g2=parseInt(document.getElementById('res2-'+partidoId)?.value);
   if(isNaN(g1)||isNaN(g2)){showToast('Ingresa ambos goles',false);return;}
+  const esElimC=FASES_ELIMINATORIAS.includes(fase);
+  let ganadorReal='';
+  if(esElimC){
+    if(g1===g2){
+      const adg1=document.getElementById('adm-gan1-'+partidoId)?.checked;
+      const adg2=document.getElementById('adm-gan2-'+partidoId)?.checked;
+      if(!adg1&&!adg2){showToast('Hubo empate: debes indicar el ganador en penales 🥅',false);return;}
+      ganadorReal=adg1?'equipo1':'equipo2';
+    }else{
+      ganadorReal=g1>g2?'equipo1':'equipo2';
+    }
+  }
   try{
-    await updateDoc(doc(db,'partidos',partidoId),{goles1:g1,goles2:g2,jugado:true});
+    await updateDoc(doc(db,'partidos',partidoId),{goles1:g1,goles2:g2,ganador:ganadorReal,jugado:true});
     const pronsSnap=await getDocs(query(collection(db,'pronosticos'),where('partidoId','==',partidoId)));
     const updates=[];
     pronsSnap.forEach(d=>{
       const pr=d.data();
-      const pts=calcularPuntos(pr.goles1,pr.goles2,g1,g2,fase);
-      const esExacto=(pr.goles1===g1&&pr.goles2===g2);
+      const pts=calcularPuntos(pr.goles1,pr.goles2,g1,g2,fase,pr.ganador,ganadorReal);
+      const esExacto=(pr.goles1===g1&&pr.goles2===g2)&&(!esElimC||(pr.ganador===ganadorReal));
       const esParcial=pts>0&&!esExacto;
       updates.push({uid:pr.userId,pts,exacto:esExacto?1:0,parcial:esParcial?1:0});
     });
