@@ -312,6 +312,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       <div class="card">
         <div class="card-title">🏅 Pronóstico de Podio Mundial 2026</div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:6px">Pronostica los 4 países que llegarán a las semifinales y su posición final.</p>
+        <div id="podio-deadline-banner"></div>
         <div style="background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;line-height:1.7">
           <strong style="color:var(--dorado)">📋 Sistema de puntos del Podio (máx. 400 pts):</strong><br>
           <span style="color:var(--text2)">• <strong style="color:var(--text)">+50 pts</strong> si el país pronosticado llega a semifinales (Top 4), independientemente de su posición final.<br>
@@ -440,6 +441,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
             <div class="form-group">
               <label>Fase</label>
               <select id="deadline-fase">
+                <option value="Podio">🏅 Podio Mundial (fecha límite para ingresar)</option>
                 <option value="Fase de grupos">⚽ Fase de grupos (72 partidos)</option>
                 <option value="Dieciseisavos">🔵 Dieciseisavos de final</option>
                 <option value="Octavos de final">🟡 Octavos de final</option>
@@ -459,6 +461,16 @@ tr:hover td{background:rgba(255,255,255,0.02)}
           </div>
           <div id="deadline-msg" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
         </div>
+      </div>
+
+      <div class="card" style="border-color:rgba(213,0,0,0.3)">
+        <div class="card-title">🗑 Resetear datos de prueba <span class="admin-badge" style="background:#b71c1c">PELIGRO</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Borra <strong>todos los pronósticos</strong> y pone los puntos, exactos y parciales de todos los usuarios en <strong>0</strong>. Úsalo solo para pruebas.</p>
+        <div style="background:rgba(213,0,0,0.07);border:1px solid rgba(213,0,0,0.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#ff5252">
+          ⚠️ Esta acción <strong>no se puede deshacer</strong>. Los partidos y el podio pronosticado <strong>no</strong> se borran.
+        </div>
+        <button class="btn" id="reset-pruebas-btn" style="color:#ff5252;border-color:rgba(213,0,0,0.4);font-weight:700">🗑 Resetear pronósticos y puntos</button>
+        <div id="reset-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
       </div>
 
       <div class="card">
@@ -606,7 +618,7 @@ const PUNTOS_FASE={
   "Final":{resultado:60,marcador:60}
 };
 
-const FASES_ORDEN=["Fase de grupos","Dieciseisavos","Octavos de final","Cuartos de final","Semifinal","Final"];
+const FASES_ORDEN=["Podio","Fase de grupos","Dieciseisavos","Octavos de final","Cuartos de final","Semifinal","Final"];
 
 // ===================== HELPERS =====================
 function showToast(msg,ok=true){const t=document.getElementById('toast');t.textContent=msg;t.style.background=ok?'#2e7d32':'#b71c1c';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
@@ -1208,6 +1220,28 @@ async function renderGruposVotos(letra) {
 
 // ===================== CAMPEON / PODIO =====================
 async function loadCampeon(){
+  // Banner fecha límite Podio
+  const bannerEl=document.getElementById('podio-deadline-banner');
+  if(bannerEl){
+    await loadFechasLimite();
+    const lim=fechasLimite['Podio'];
+    if(lim){
+      const d=lim.toDate?lim.toDate():new Date(lim);
+      const abierto=Date.now()<d.getTime();
+      const fechaStr=d.toLocaleDateString('es-EC',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      if(abierto){
+        bannerEl.innerHTML=`<div style="display:flex;align-items:center;gap:8px;background:rgba(0,150,136,0.1);border:1px solid rgba(0,150,136,0.3);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#4db6ac">
+          ✅ <strong>Abierto</strong> — Fecha límite: ${fechaStr}
+        </div>`;
+      }else{
+        bannerEl.innerHTML=`<div style="display:flex;align-items:center;gap:8px;background:rgba(213,0,0,0.08);border:1px solid rgba(213,0,0,0.25);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#ff5252">
+          🔒 <strong>Cerrado</strong> — El plazo venció el ${fechaStr}. Ya no puedes modificar tu podio.
+        </div>`;
+      }
+    }else{
+      bannerEl.innerHTML='';
+    }
+  }
   const POSICIONES=[
     {num:1,emoji:'🥇',label:'Campeón'},
     {num:2,emoji:'🥈',label:'Subcampeón'},
@@ -1274,6 +1308,8 @@ async function loadCampeon(){
 }
 
 document.getElementById('save-champ-btn').addEventListener('click',async()=>{
+  // Verificar fecha límite del Podio
+  if(!faseAbierta('Podio')){showToast('El plazo para ingresar el Podio está cerrado 🔒',false);return;}
   const faltantes=[1,2,3,4].filter(n=>!selectedPodio[n]);
   if(faltantes.length>0){showToast('Selecciona los 4 puestos del podio',false);return;}
   try{
@@ -1454,6 +1490,40 @@ document.getElementById('confirmar-podio-btn').addEventListener('click',async()=
     showToast(`✅ Podio confirmado. ${procesados} jugadores actualizados.`);
     status.textContent=`✅ Podio oficial: 🥇${podioReal[1]} 🥈${podioReal[2]} 🥉${podioReal[3]} 4°${podioReal[4]} — ${procesados} jugadores actualizados.`;
   }catch(e){showToast('Error: '+e.message,false);status.textContent='Error: '+e.message;}
+});
+
+document.getElementById('reset-pruebas-btn').addEventListener('click',async()=>{
+  const confirmado=confirm('⚠️ ¿Seguro? Esto borrará TODOS los pronósticos y pondrá los puntos de todos en 0. No se puede deshacer.');
+  if(!confirmado)return;
+  const btn=document.getElementById('reset-pruebas-btn');
+  const status=document.getElementById('reset-status');
+  btn.disabled=true;
+  btn.textContent='⏳ Reseteando...';
+  status.textContent='';
+  try{
+    // 1. Borrar todos los pronósticos
+    const pronsSnap=await getDocs(collection(db,'pronosticos'));
+    let borrados=0;
+    for(const d of pronsSnap.docs){
+      await deleteDoc(doc(db,'pronosticos',d.id));
+      borrados++;
+    }
+    // 2. Resetear puntos de todos los usuarios
+    const usersSnap=await getDocs(collection(db,'users'));
+    let usuarios=0;
+    for(const d of usersSnap.docs){
+      await updateDoc(doc(db,'users',d.id),{puntos:0,exactos:0,parciales:0});
+      usuarios++;
+    }
+    showToast(`✅ Reset completo: ${borrados} pronósticos borrados, ${usuarios} usuarios reseteados.`);
+    status.innerHTML=`<span style="color:#4caf50">✅ ${borrados} pronósticos borrados · ${usuarios} usuarios reseteados a 0 pts</span>`;
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    status.textContent='Error: '+e.message;
+  }finally{
+    btn.disabled=false;
+    btn.textContent='🗑 Resetear pronósticos y puntos';
+  }
 });
 
 document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
