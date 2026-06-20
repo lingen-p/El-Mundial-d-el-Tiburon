@@ -463,6 +463,30 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         </div>
       </div>
 
+      <div class="card" style="border-color:rgba(0,150,136,0.3)">
+        <div class="card-title">📦 Exportar todos los datos <span class="admin-badge" style="background:#00695c">BACKUP</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Descarga un archivo con todos los partidos, pronósticos y usuarios para revisión o respaldo.</p>
+        <button class="btn btn-primary" id="export-data-btn">📦 Descargar todos los datos (JSON)</button>
+        <div id="export-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
+      <div class="card" style="border-color:rgba(255,152,0,0.3)">
+        <div class="card-title">🔧 Recalcular puntos de un partido ya jugado <span class="admin-badge" style="background:#e65100">CORRECCIÓN</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Úsalo si un partido se confirmó con puntos incorrectos. Resta lo que se sumó antes y vuelve a calcular con los puntos correctos.</p>
+        <div style="background:rgba(255,152,0,0.07);border:1px solid rgba(255,152,0,0.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#ffb74d">
+          ⚠️ Solo úsalo una vez por partido. Si lo corres dos veces en el mismo partido, los puntos quedarán mal.
+        </div>
+        <div class="form-group" style="margin-bottom:12px">
+          <label>Selecciona el partido a recalcular</label>
+          <select id="recalc-partido-sel" style="width:100%;padding:10px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px">
+            <option value="">— Cargando partidos jugados... —</option>
+          </select>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:12px" id="recalc-info"></div>
+        <button class="btn" id="recalc-btn" style="color:#ffb74d;border-color:rgba(255,152,0,0.4);font-weight:700">🔧 Recalcular puntos</button>
+        <div id="recalc-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
       <div class="card" style="border-color:rgba(213,0,0,0.3)">
         <div class="card-title">🗑 Resetear datos de prueba <span class="admin-badge" style="background:#b71c1c">PELIGRO</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Borra <strong>todos los pronósticos</strong> y pone los puntos, exactos y parciales de todos los usuarios en <strong>0</strong>. Úsalo solo para pruebas.</p>
@@ -1353,6 +1377,7 @@ async function sendChat(){
 // ===================== ADMIN =====================
 async function loadAdmin(){
   if(!currentProfile||currentProfile.rol!=='admin')return;
+  poblarSelectRecalc();
   [1,2,3,4].forEach(n=>{
     const sel=document.getElementById('podio-real-'+n);
     if(sel&&sel.options.length<=1){
@@ -1490,6 +1515,135 @@ document.getElementById('confirmar-podio-btn').addEventListener('click',async()=
     showToast(`✅ Podio confirmado. ${procesados} jugadores actualizados.`);
     status.textContent=`✅ Podio oficial: 🥇${podioReal[1]} 🥈${podioReal[2]} 🥉${podioReal[3]} 4°${podioReal[4]} — ${procesados} jugadores actualizados.`;
   }catch(e){showToast('Error: '+e.message,false);status.textContent='Error: '+e.message;}
+});
+
+// Poblar select de partidos jugados para recalcular
+async function poblarSelectRecalc(){
+  const sel=document.getElementById('recalc-partido-sel');
+  if(!sel)return;
+  const jugados=partidos.filter(p=>p.jugado);
+  if(jugados.length===0){sel.innerHTML='<option value="">— No hay partidos jugados aún —</option>';return;}
+  sel.innerHTML='<option value="">— Selecciona un partido —</option>'+
+    jugados.map(p=>`<option value="${p.id}" data-fase="${p.fase}" data-g1="${p.goles1}" data-g2="${p.goles2}" data-ganador="${p.ganador||''}">${p.equipo1} vs ${p.equipo2} (${p.goles1}-${p.goles2}) · ${p.fase}</option>`).join('');
+  sel.addEventListener('change',()=>{
+    const opt=sel.options[sel.selectedIndex];
+    const info=document.getElementById('recalc-info');
+    if(!opt.value){info.textContent='';return;}
+    const fase=opt.dataset.fase;
+    const pts=PUNTOS_FASE[fase]||PUNTOS_FASE["Fase de grupos"];
+    info.innerHTML=`Fase: <strong>${fase}</strong> · Puntos correctos: <strong style="color:var(--dorado)">+${pts.resultado} resultado / +${pts.marcador} marcador exacto</strong>`;
+  });
+}
+
+document.getElementById('export-data-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('export-data-btn');
+  const status=document.getElementById('export-status');
+  btn.disabled=true;btn.textContent='⏳ Exportando...';status.textContent='';
+  try{
+    const data={exportadoEn:new Date().toISOString(),partidos:[],pronosticos:[],users:[]};
+
+    const partidosSnap=await getDocs(collection(db,'partidos'));
+    partidosSnap.forEach(d=>data.partidos.push({id:d.id,...d.data()}));
+
+    const pronsSnap=await getDocs(collection(db,'pronosticos'));
+    pronsSnap.forEach(d=>data.pronosticos.push({id:d.id,...d.data()}));
+
+    const usersSnap=await getDocs(collection(db,'users'));
+    usersSnap.forEach(d=>data.users.push({id:d.id,...d.data()}));
+
+    const jsonStr=JSON.stringify(data,(key,val)=>{
+      if(val&&typeof val==='object'&&val.seconds!==undefined&&val.nanoseconds!==undefined){
+        return new Date(val.seconds*1000).toISOString();
+      }
+      return val;
+    },2);
+
+    const blob=new Blob([jsonStr],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=`tiburon2026_backup_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    status.innerHTML=`<span style="color:#4caf50">✅ Exportado: ${data.partidos.length} partidos, ${data.pronosticos.length} pronósticos, ${data.users.length} usuarios.</span>`;
+    showToast('✅ Datos exportados correctamente');
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    status.textContent='Error: '+e.message;
+  }finally{
+    btn.disabled=false;btn.textContent='📦 Descargar todos los datos (JSON)';
+  }
+});
+
+document.getElementById('recalc-btn').addEventListener('click',async()=>{
+  const sel=document.getElementById('recalc-partido-sel');
+  const status=document.getElementById('recalc-status');
+  const partidoId=sel.value;
+  if(!partidoId){showToast('Selecciona un partido',false);return;}
+  const opt=sel.options[sel.selectedIndex];
+  const fase=opt.dataset.fase;
+  const g1Real=parseInt(opt.dataset.g1);
+  const g2Real=parseInt(opt.dataset.g2);
+  const ganadorReal=opt.dataset.ganador||'';
+  const confirmado=confirm(`¿Recalcular puntos de "${opt.text}"?\n\nEsto restará los puntos sumados antes y volverá a calcular con los valores correctos.`);
+  if(!confirmado)return;
+  const btn=document.getElementById('recalc-btn');
+  btn.disabled=true;btn.textContent='⏳ Recalculando...';status.textContent='';
+  try{
+    const esElim=FASES_ELIMINATORIAS.includes(fase);
+    const ptsCorrectos=PUNTOS_FASE[fase]||PUNTOS_FASE["Fase de grupos"];
+    // Puntos que se sumaron incorrectamente (siempre fueron 20/20 para grupos por el bug)
+    const ptsIncorrectos={resultado:20,marcador:20};
+    const pronsSnap=await getDocs(query(collection(db,'pronosticos'),where('partidoId','==',partidoId)));
+    let procesados=0;
+    for(const d of pronsSnap.docs){
+      const pr=d.data();
+      // Calcular lo que se sumó mal (con 20/20)
+      const ganadorP=pr.goles1!==pr.goles2?(pr.goles1>pr.goles2?'equipo1':'equipo2'):pr.ganador;
+      const ganadorR=g1Real!==g2Real?(g1Real>g2Real?'equipo1':'equipo2'):ganadorReal;
+      let ptsViejos=0;
+      if(esElim){
+        if(ganadorP&&ganadorR&&ganadorP===ganadorR)ptsViejos+=ptsIncorrectos.resultado;
+        if(pr.goles1===g1Real&&pr.goles2===g2Real)ptsViejos+=ptsIncorrectos.marcador;
+      }else{
+        const resP=pr.goles1>pr.goles2?1:pr.goles1<pr.goles2?-1:0;
+        const resR=g1Real>g2Real?1:g1Real<g2Real?-1:0;
+        if(resP===resR)ptsViejos+=ptsIncorrectos.resultado;
+        if(pr.goles1===g1Real&&pr.goles2===g2Real)ptsViejos+=ptsIncorrectos.marcador;
+      }
+      // Calcular lo correcto
+      let ptsNuevos=0;
+      if(esElim){
+        if(ganadorP&&ganadorR&&ganadorP===ganadorR)ptsNuevos+=ptsCorrectos.resultado;
+        if(pr.goles1===g1Real&&pr.goles2===g2Real)ptsNuevos+=ptsCorrectos.marcador;
+      }else{
+        const resP=pr.goles1>pr.goles2?1:pr.goles1<pr.goles2?-1:0;
+        const resR=g1Real>g2Real?1:g1Real<g2Real?-1:0;
+        if(resP===resR)ptsNuevos+=ptsCorrectos.resultado;
+        if(pr.goles1===g1Real&&pr.goles2===g2Real)ptsNuevos+=ptsCorrectos.marcador;
+      }
+      const diff=ptsNuevos-ptsViejos;
+      if(diff!==0){
+        const uRef=doc(db,'users',pr.userId);
+        const uSnap=await getDoc(uRef);
+        if(uSnap.exists()){
+          const ud=uSnap.data();
+          await updateDoc(uRef,{puntos:Math.max(0,(ud.puntos||0)+diff)});
+        }
+      }
+      procesados++;
+    }
+    showToast(`✅ Recalculado. ${procesados} pronósticos ajustados.`);
+    status.innerHTML=`<span style="color:#4caf50">✅ ${procesados} pronósticos recalculados correctamente.</span>`;
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    status.textContent='Error: '+e.message;
+  }finally{
+    btn.disabled=false;btn.textContent='🔧 Recalcular puntos';
+  }
 });
 
 document.getElementById('reset-pruebas-btn').addEventListener('click',async()=>{
