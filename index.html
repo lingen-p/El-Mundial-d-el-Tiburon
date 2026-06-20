@@ -463,6 +463,16 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         </div>
       </div>
 
+      <div class="card" style="border-color:rgba(76,175,80,0.4)">
+        <div class="card-title">✅ Corrección de puntos (20-jun-2026) <span class="admin-badge" style="background:#2e7d32">ÚNICA VEZ</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Aplica los puntos correctos recalculados manualmente para los 11 jugadores tras detectar una suma duplicada. Esto sobreescribe puntos, exactos y parciales con los valores correctos.</p>
+        <div style="background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.25);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#81c784">
+          ℹ️ Usa este botón <strong>una sola vez</strong>. Después de aplicarlo, bórralo del código o no lo vuelvas a usar para no sobreescribir puntos futuros.
+        </div>
+        <button class="btn btn-primary" id="fix-puntos-btn" style="background:#2e7d32;border-color:#2e7d32">✅ Aplicar puntos correctos (11 jugadores)</button>
+        <div id="fix-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
       <div class="card" style="border-color:rgba(0,150,136,0.3)">
         <div class="card-title">📦 Exportar todos los datos <span class="admin-badge" style="background:#00695c">BACKUP</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Descarga un archivo con todos los partidos, pronósticos y usuarios para revisión o respaldo.</p>
@@ -1534,6 +1544,36 @@ async function poblarSelectRecalc(){
     info.innerHTML=`Fase: <strong>${fase}</strong> · Puntos correctos: <strong style="color:var(--dorado)">+${pts.resultado} resultado / +${pts.marcador} marcador exacto</strong>`;
   });
 }
+
+const VALORES_CORRECTOS_20JUN={"1cesnJdzq8X8xTp5LEXOQOVa02D2": {"puntos": 210, "exactos": 3, "parciales": 15}, "4USNSD1igEMXE0JllkP2QBOovir1": {"puntos": 180, "exactos": 2, "parciales": 14}, "4u54evJOtKdAP9BbZBYxwLG8Jbb2": {"puntos": 200, "exactos": 3, "parciales": 14}, "BGRTp6veNQgliJOIkGCVMlBxTih2": {"puntos": 170, "exactos": 1, "parciales": 15}, "DefLdNPOyYVtfnCbHQQLpltJKUc2": {"puntos": 250, "exactos": 6, "parciales": 13}, "FPzZIxQMgIP4llaoR1ih75ZcIEQ2": {"puntos": 230, "exactos": 4, "parciales": 15}, "JV8FIrzAQMgpBMGsGZ79K7YTR2X2": {"puntos": 230, "exactos": 6, "parciales": 11}, "L1wOUFPXBbS3IStZtSNB0o9jLoS2": {"puntos": 180, "exactos": 1, "parciales": 16}, "MRpvsruZ7Odk6f9f1DeIraBra0F3": {"puntos": 240, "exactos": 4, "parciales": 16}, "YqQ0dI0O0Gh3Cz3F7mPkH3GEt6Y2": {"puntos": 210, "exactos": 3, "parciales": 15}, "oLkTCYSyghU34dNz7B7R5xCjPjw2": {"puntos": 190, "exactos": 3, "parciales": 13}};
+
+document.getElementById('fix-puntos-btn').addEventListener('click',async()=>{
+  const confirmado=confirm('¿Aplicar los puntos correctos a los 11 jugadores? Esto sobreescribirá puntos, exactos y parciales actuales.');
+  if(!confirmado)return;
+  const btn=document.getElementById('fix-puntos-btn');
+  const status=document.getElementById('fix-status');
+  btn.disabled=true;btn.textContent='⏳ Aplicando...';status.textContent='';
+  try{
+    let aplicados=0;
+    for(const uid in VALORES_CORRECTOS_20JUN){
+      const v=VALORES_CORRECTOS_20JUN[uid];
+      const uRef=doc(db,'users',uid);
+      const uSnap=await getDoc(uRef);
+      if(uSnap.exists()){
+        await updateDoc(uRef,{puntos:v.puntos,exactos:v.exactos,parciales:v.parciales});
+        aplicados++;
+      }
+    }
+    showToast(`✅ Puntos corregidos en ${aplicados} jugadores.`);
+    status.innerHTML=`<span style="color:#4caf50">✅ ${aplicados} jugadores actualizados con los valores correctos.</span>`;
+    loadAdmin();
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    status.textContent='Error: '+e.message;
+  }finally{
+    btn.disabled=false;btn.textContent='✅ Aplicar puntos correctos (11 jugadores)';
+  }
+});
 
 document.getElementById('export-data-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('export-data-btn');
