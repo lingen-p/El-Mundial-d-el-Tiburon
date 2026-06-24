@@ -473,6 +473,12 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         <div id="fix-status-v2" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
       </div>
 
+      <div class="card" style="border-color:rgba(156,39,176,0.35)">
+        <div class="card-title">🗂 Confirmar Posiciones de Grupo <span class="admin-badge" style="background:#6a1b9a">+20 PTS C/U</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Cuando un grupo termine sus 6 partidos, confírmalo aquí para sumar <strong>+20 pts por cada posición acertada</strong> (hasta 80 pts por grupo) a cada jugador. Cada grupo solo se puede confirmar <strong>una vez</strong>.</p>
+        <div id="grupos-confirmar-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
       <div class="card" style="border-color:rgba(0,150,136,0.3)">
         <div class="card-title">📦 Exportar todos los datos <span class="admin-badge" style="background:#00695c">BACKUP</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Descarga un archivo con todos los partidos, pronósticos y usuarios para revisión o respaldo.</p>
@@ -1397,6 +1403,7 @@ function esAdmin(){
 async function loadAdmin(){
   if(!esAdmin())return;
   poblarSelectRecalc();
+  poblarGruposConfirmar();
   [1,2,3,4].forEach(n=>{
     const sel=document.getElementById('podio-real-'+n);
     if(sel&&sel.options.length<=1){
@@ -1609,6 +1616,114 @@ document.getElementById('fix-puntos-btn-v2').addEventListener('click',async()=>{
     btn.disabled=false;btn.textContent='🆕 Verificar y aplicar corrección V2';
   }
 });
+
+async function poblarGruposConfirmar(){
+  const cont=document.getElementById('grupos-confirmar-list');
+  if(!cont)return;
+  cont.innerHTML='<div class="empty"><p>Cargando estado de grupos...</p></div>';
+
+  // Leer qué grupos ya fueron confirmados (anti-duplicado real, en Firestore)
+  const confSnap=await getDoc(doc(db,'config','grupos_confirmados'));
+  const confirmados = confSnap.exists() ? confSnap.data() : {};
+
+  const letras = Object.keys(GRUPOS_MUNDIAL);
+  let html='';
+  for(const letra of letras){
+    const partidosGrupo = PARTIDOS_MUNDIAL.filter(p=>p.grupo===letra);
+    const partidosDB = partidos.filter(p=>p.grupo===letra);
+    const jugados = partidosDB.filter(p=>p.jugado).length;
+    const total = partidosGrupo.length;
+    const yaConfirmado = !!confirmados[letra];
+    const completo = jugados===total && total>0;
+
+    let badge, btnHtml;
+    if(yaConfirmado){
+      badge = `<span class="badge b-green">✅ Confirmado</span>`;
+      btnHtml = `<span style="font-size:12px;color:var(--text2)">Ya se sumaron los puntos de este grupo</span>`;
+    }else if(completo){
+      badge = `<span class="badge b-blue">${jugados}/${total} jugados</span>`;
+      btnHtml = `<button class="btn btn-primary" style="padding:6px 14px;font-size:13px" onclick="confirmarPosicionesGrupo('${letra}')">🗂 Confirmar Grupo ${letra}</button>`;
+    }else{
+      badge = `<span class="badge b-gray">${jugados}/${total} jugados</span>`;
+      btnHtml = `<span style="font-size:12px;color:var(--text3)">Faltan partidos por jugar</span>`;
+    }
+
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <strong>Grupo ${letra}</strong>${badge}
+      </div>
+      ${btnHtml}
+    </div>`;
+  }
+  cont.innerHTML = html;
+}
+
+window.confirmarPosicionesGrupo=async function(letra){
+  if(!esAdmin())return;
+  // BLINDAJE anti-doble-confirmación: verificar contra Firestore en este instante
+  const confSnap=await getDoc(doc(db,'config','grupos_confirmados'));
+  const confirmados = confSnap.exists() ? confSnap.data() : {};
+  if(confirmados[letra]){
+    showToast(`⛔ El Grupo ${letra} ya fue confirmado antes.`,false);
+    return;
+  }
+  const confirmacion=confirm(`¿Confirmar las posiciones del Grupo ${letra}?\n\nSe sumarán +20 pts a cada jugador por cada posición exacta que haya acertado. Esta acción no se puede repetir para este grupo.`);
+  if(!confirmacion)return;
+
+  try{
+    // 1. Calcular tabla oficial del grupo
+    const oficialResultados={};
+    partidos.filter(p=>p.grupo===letra&&p.jugado).forEach(p=>{
+      oficialResultados[p.equipo1+'_'+p.equipo2]={g1:p.goles1,g2:p.goles2};
+    });
+    const tablaOficial=calcularTablaGrupo(letra,oficialResultados);
+    const paisesOficial=tablaOficial.map(e=>e.pais);
+
+    // 2. Para cada usuario, calcular su tabla pronosticada y comparar
+    const usersSnap=await getDocs(collection(db,'users'));
+    const partidoIdsGrupo=partidos.filter(p=>p.grupo===letra).map(p=>p.id);
+    let procesados=0;
+
+    for(const uDoc of usersSnap.docs){
+      const uid=uDoc.id;
+      const misResultados={};
+      for(const pid of partidoIdsGrupo){
+        const prSnap=await getDoc(doc(db,'pronosticos',uid+'_'+pid));
+        if(prSnap.exists()){
+          const pr=prSnap.data();
+          const p=partidos.find(x=>x.id===pid);
+          if(p) misResultados[p.equipo1+'_'+p.equipo2]={g1:pr.goles1,g2:pr.goles2};
+        }
+      }
+      if(Object.keys(misResultados).length===0)continue; // sin pronosticos en este grupo
+
+      const miTabla=calcularTablaGrupo(letra,misResultados);
+      const misPaises=miTabla.map(e=>e.pais);
+      let aciertos=0;
+      misPaises.forEach((pais,i)=>{ if(pais===paisesOficial[i]) aciertos++; });
+      const ptsGanados=aciertos*20;
+
+      if(ptsGanados>0){
+        const uRef=doc(db,'users',uid);
+        const uSnap=await getDoc(uRef);
+        if(uSnap.exists()){
+          const ud=uSnap.data();
+          await updateDoc(uRef,{puntos:(ud.puntos||0)+ptsGanados});
+        }
+      }
+      procesados++;
+    }
+
+    // 3. Marcar el grupo como confirmado (anti-duplicado permanente)
+    await setDoc(doc(db,'config','grupos_confirmados'),{[letra]:true},{merge:true});
+
+    showToast(`✅ Grupo ${letra} confirmado. ${procesados} jugadores procesados.`);
+    poblarGruposConfirmar();
+    loadAdmin();
+  }catch(e){
+    showToast('Error: '+e.message,false);
+  }
+};
 
 document.getElementById('export-data-btn').addEventListener('click',async()=>{
   if(!esAdmin())return;
