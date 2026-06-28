@@ -526,11 +526,11 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 
       <div class="card" style="border-color:rgba(33,150,243,0.35)">
         <div class="card-title">🔵 Cargar Dieciseisavos de Final <span class="admin-badge" style="background:#1565c0">16AVOS</span></div>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga los partidos de Dieciseisavos ya confirmados (<strong id="count-16avos">9</strong> partidos). Esto NO borra ni afecta los partidos de Fase de Grupos.</p>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga los partidos de Dieciseisavos confirmados (<strong>16 partidos</strong> en total). Solo agrega los que falten — no duplica los ya cargados. Esto NO borra ni afecta los partidos de Fase de Grupos.</p>
         <div style="background:rgba(33,150,243,0.07);border:1px solid rgba(33,150,243,0.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#64b5f6">
-          ℹ️ Puntuación de esta fase: <strong>20 pts por resultado + 20 pts por marcador exacto</strong> (máx 40 pts por partido). Faltan 4 cruces por confirmar (México, Bélgica, España, Suiza) — se agregarán después.
+          ℹ️ Puntuación de esta fase: <strong>20 pts por resultado + 20 pts por marcador exacto</strong> (máx 40 pts por partido).
         </div>
-        <button class="btn btn-primary" id="seed-16avos-btn" style="background:#1565c0;border-color:#1565c0">🔵 Cargar 9 partidos de Dieciseisavos</button>
+        <button class="btn btn-primary" id="seed-16avos-btn" style="background:#1565c0;border-color:#1565c0">🔵 Cargar partidos de Dieciseisavos</button>
         <div id="seed-16avos-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
       </div>
     </div>
@@ -580,6 +580,13 @@ const PARTIDOS_16AVOS=[
   {equipo1:"🇺🇸 Estados Unidos",equipo2:"🇧🇦 Bosnia y Herz.",fecha:"2026-07-01T19:00:00",fase:"Dieciseisavos"},
   {equipo1:"🇦🇺 Australia",equipo2:"🇪🇬 Egipto",fecha:"2026-07-02T22:00:00",fase:"Dieciseisavos"},
   {equipo1:"🇦🇷 Argentina",equipo2:"🇨🇻 Cabo Verde",fecha:"2026-07-03T17:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🇲🇽 México",equipo2:"🇪🇨 Ecuador",fecha:"2026-06-30T20:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",equipo2:"🇨🇩 RD Congo",fecha:"2026-07-01T11:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🇧🇪 Bélgica",equipo2:"🇸🇳 Senegal",fecha:"2026-07-01T15:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🇪🇸 España",equipo2:"🇦🇹 Austria",fecha:"2026-07-02T14:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🇵🇹 Portugal",equipo2:"🇭🇷 Croacia",fecha:"2026-07-02T18:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🇨🇭 Suiza",equipo2:"🇩🇿 Argelia",fecha:"2026-07-02T22:00:00",fase:"Dieciseisavos"},
+  {equipo1:"🇨🇴 Colombia",equipo2:"🇬🇭 Ghana",fecha:"2026-07-03T20:30:00",fase:"Dieciseisavos"},
 ];
 
 // 72 partidos: cada grupo juega 6 partidos (4 equipos: A-B, A-C, A-D, B-C, B-D, C-D)
@@ -1949,16 +1956,26 @@ document.getElementById('seed-16avos-btn').addEventListener('click',async()=>{
   if(!esAdmin())return;
   const btn=document.getElementById('seed-16avos-btn');
   const status=document.getElementById('seed-16avos-status');
-  // Evitar duplicados: verificar si ya existen partidos de Dieciseisavos con estos mismos equipos
-  const existing=await getDocs(query(collection(db,'partidos'),where('fase','==','Dieciseisavos')));
-  if(existing.size>0){
-    status.innerHTML=`<span style="color:#ff5252">⚠️ Ya existen ${existing.size} partidos de Dieciseisavos cargados. No se volvieron a cargar para evitar duplicados.</span>`;
-    return;
-  }
-  btn.disabled=true;btn.textContent='⏳ Cargando...';status.textContent='';
+  btn.disabled=true;btn.textContent='⏳ Verificando...';status.textContent='';
   try{
+    // Verificar cuáles partidos ya existen (por equipo1+equipo2) para no duplicar
+    const existing=await getDocs(query(collection(db,'partidos'),where('fase','==','Dieciseisavos')));
+    const existentes=new Set();
+    existing.forEach(d=>{
+      const e=d.data();
+      existentes.add(e.equipo1+'|'+e.equipo2);
+    });
+    const faltantes=PARTIDOS_16AVOS.filter(p=>!existentes.has(p.equipo1+'|'+p.equipo2));
+
+    if(faltantes.length===0){
+      status.innerHTML=`<span style="color:#ff5252">⚠️ Los ${PARTIDOS_16AVOS.length} partidos de Dieciseisavos ya estaban cargados. No hay nuevos por agregar.</span>`;
+      btn.disabled=false;btn.textContent='🔵 Cargar partidos de Dieciseisavos';
+      return;
+    }
+
+    btn.textContent='⏳ Cargando...';
     let count=0;
-    for(const p of PARTIDOS_16AVOS){
+    for(const p of faltantes){
       await addDoc(collection(db,'partidos'),{
         equipo1:p.equipo1,equipo2:p.equipo2,
         fecha:new Date(p.fecha),
@@ -1966,11 +1983,11 @@ document.getElementById('seed-16avos-btn').addEventListener('click',async()=>{
         creado:serverTimestamp()
       });
       count++;
-      status.textContent=`Cargando... ${count}/${PARTIDOS_16AVOS.length}`;
+      status.textContent=`Cargando... ${count}/${faltantes.length}`;
     }
-    showToast(`✅ ${PARTIDOS_16AVOS.length} partidos de Dieciseisavos cargados.`);
+    showToast(`✅ ${faltantes.length} partidos nuevos de Dieciseisavos cargados.`);
 
-    // Configurar fecha límite automáticamente: hoy + 1 día a la 1:59 AM hora Ecuador
+    // Asegurar que la fecha límite siga configurada (si ya existía, no la pisa con merge false; usamos merge true igual)
     const ahora=new Date();
     const limite=new Date(ahora);
     limite.setDate(limite.getDate()+1);
@@ -1979,8 +1996,8 @@ document.getElementById('seed-16avos-btn').addEventListener('click',async()=>{
     await loadFechasLimite();
 
     const limiteStr=limite.toLocaleDateString('es-EC',{day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});
-    status.innerHTML=`<span style="color:#4caf50">✅ ${PARTIDOS_16AVOS.length} partidos cargados. Fecha límite configurada automáticamente: ${limiteStr}.</span>`;
-    btn.textContent='✅ Ya cargados';
+    status.innerHTML=`<span style="color:#4caf50">✅ ${faltantes.length} partidos nuevos cargados (de ${PARTIDOS_16AVOS.length} totales). Fecha límite: ${limiteStr}.</span>`;
+    btn.textContent='✅ Listo';
   }catch(e){
     showToast('Error: '+e.message,false);
     btn.disabled=false;btn.textContent='🔵 Cargar 9 partidos de Dieciseisavos';
