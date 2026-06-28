@@ -891,80 +891,99 @@ async function loadTop5(){
 // ===================== PRONOSTICAR =====================
 async function loadPronosticar(){
   if(!currentUser)return;
-  const fase="Fase de grupos";
-  const abierto=faseAbierta(fase);
-  const limite=formatLimite(fase);
   const listaEl=document.getElementById('pronosticos-lista');
 
-  // Banner de estado del deadline
-  let bannerHtml='';
-  if(limite){
-    bannerHtml=abierto
-      ?`<div style="background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--verde)">✅ <strong>Pronósticos abiertos</strong> hasta el <strong>${limite}</strong></div>`
-      :`<div style="background:rgba(213,0,0,0.1);border:1px solid rgba(213,0,0,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#ff5252">🔒 <strong>Pronósticos cerrados.</strong> El plazo venció el ${limite}. Ya no puedes modificar tus pronósticos de fase de grupos.</div>`;
-  }
+  // Detectar todas las fases que tienen partidos sin jugar
+  const fasesConPendientes=[...new Set(partidos.filter(p=>!p.jugado).map(p=>p.fase))];
+  // Ordenar según FASES_ORDEN para que se vean en orden lógico
+  fasesConPendientes.sort((a,b)=>FASES_ORDEN.indexOf(a)-FASES_ORDEN.indexOf(b));
 
-  const disponibles=partidos.filter(p=>p.fase==="Fase de grupos"&&!p.jugado);
-
-  if(!abierto){
-    listaEl.innerHTML=bannerHtml+`<div class="empty"><div class="empty-icon">🔒</div><p>Los pronósticos de la Fase de Grupos están cerrados.</p></div>`;
-  }else if(disponibles.length===0){
-    listaEl.innerHTML=bannerHtml+`<div class="empty"><div class="empty-icon">⏰</div><p>No hay partidos disponibles para pronosticar.</p></div>`;
+  if(fasesConPendientes.length===0){
+    listaEl.innerHTML=`<div class="empty"><div class="empty-icon">⏰</div><p>No hay partidos disponibles para pronosticar en este momento.</p></div>`;
   }else{
     const myPronsSnap=await getDocs(query(collection(db,'pronosticos'),where('userId','==',currentUser.uid)));
     const myProns={};
     myPronsSnap.forEach(d=>{myProns[d.data().partidoId]=d.data();});
-    // Group by group
-    const byGrupo={};
-    disponibles.forEach(p=>{if(!byGrupo[p.grupo])byGrupo[p.grupo]=[];byGrupo[p.grupo].push(p);});
-    let html=bannerHtml;
-    Object.entries(byGrupo).sort(([a],[b])=>a.localeCompare(b)).forEach(([grupo,ps])=>{
-      html+=`<div style="margin-bottom:20px"><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--dorado);letter-spacing:1px;margin-bottom:10px">GRUPO ${grupo}</div>`;
-      ps.forEach(p=>{
-        const ya=myProns[p.id];
-        const pts=PUNTOS_FASE[p.fase]||PUNTOS_FASE["Fase de grupos"];
-        const esElimP=FASES_ELIMINATORIAS.includes(p.fase);
-        const flag1p=p.equipo1.split(' ')[0];
-        const flag2p=p.equipo2.split(' ')[0];
-        const nom1p=p.equipo1.split(' ').slice(1).join(' ');
-        const nom2p=p.equipo2.split(' ').slice(1).join(' ');
-        const ganGuardado=ya?.ganador||'';
-        const ganadorSel=esElimP?`
-          <div style="margin-top:12px;padding:10px 12px;background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px">
-            <div style="font-size:12px;color:var(--dorado);font-weight:700;margin-bottom:8px">⚽ Si hay empate en 90', ¿quién gana en penales?</div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
-                <input type="radio" name="ganador-${p.id}" id="gan1-${p.id}" value="equipo1" ${ganGuardado==='equipo1'?'checked':''}> ${flag1p} ${nom1p}
-              </label>
-              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
-                <input type="radio" name="ganador-${p.id}" id="gan2-${p.id}" value="equipo2" ${ganGuardado==='equipo2'?'checked':''}> ${flag2p} ${nom2p}
-              </label>
-            </div>
-          </div>`:'';
-        html+=`<div class="prono-card">
-          <div class="prono-header">
-            <div>
-              <div class="prono-match">${p.equipo1} vs ${p.equipo2}</div>
-              <div style="font-size:11px;color:var(--text2);margin-top:3px">${formatDate(p.fecha)} · <span class="puntos-fase">+${pts.resultado} pts resultado / +${pts.marcador} pts exacto</span></div>
-            </div>
-          </div>
-          <div class="prono-score-row">
-            <div class="prono-team"><span class="prono-flag">${flag1p}</span><span>${nom1p}</span></div>
-            <input type="number" class="prono-input" id="g1-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles1:''}" placeholder="0">
-            <span class="prono-vs">—</span>
-            <input type="number" class="prono-input" id="g2-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles2:''}" placeholder="0">
-            <div class="prono-team"><span class="prono-flag">${flag2p}</span><span>${nom2p}</span></div>
-          </div>
-          ${ganadorSel}
-          <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
-            <button class="btn btn-primary" onclick="guardarPronostico('${p.id}',${esElimP})">💾 ${ya!==undefined?'Actualizar':'Guardar'}</button>
-            ${ya!==undefined?'<span class="badge b-green">✓ Guardado</span>':''}
-          </div>
-        </div>`;
-      });
-      html+=`</div>`;
-    });
-    listaEl.innerHTML=html;
+
+    let htmlTotal='';
+    for(const fase of fasesConPendientes){
+      const abierto=faseAbierta(fase);
+      const limite=formatLimite(fase);
+      const disponibles=partidos.filter(p=>p.fase===fase&&!p.jugado);
+
+      let bannerHtml='';
+      if(limite){
+        bannerHtml=abierto
+          ?`<div style="background:rgba(0,200,83,0.1);border:1px solid rgba(0,200,83,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--verde)">✅ <strong>${fase} — Pronósticos abiertos</strong> hasta el <strong>${limite}</strong></div>`
+          :`<div style="background:rgba(213,0,0,0.1);border:1px solid rgba(213,0,0,0.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#ff5252">🔒 <strong>${fase} — Pronósticos cerrados.</strong> El plazo venció el ${limite}.</div>`;
+      }else{
+        bannerHtml=`<div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--text2)">📋 <strong>${fase}</strong> — Sin fecha límite establecida, los jugadores pueden pronosticar en cualquier momento</div>`;
+      }
+
+      htmlTotal+=`<div style="margin-bottom:28px"><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--dorado);letter-spacing:1px;margin-bottom:12px;border-bottom:2px solid var(--border);padding-bottom:8px">${fase.toUpperCase()}</div>`;
+      htmlTotal+=bannerHtml;
+
+      if(!abierto){
+        htmlTotal+=`<div class="empty"><div class="empty-icon">🔒</div><p>Los pronósticos de ${fase} están cerrados.</p></div>`;
+      }else{
+        // Group by grupo (solo aplica a Fase de grupos; otras fases no tienen grupo)
+        const byGrupo={};
+        disponibles.forEach(p=>{
+          const key=p.grupo||'_sin_grupo';
+          if(!byGrupo[key])byGrupo[key]=[];
+          byGrupo[key].push(p);
+        });
+        Object.entries(byGrupo).sort(([a],[b])=>a.localeCompare(b)).forEach(([grupo,ps])=>{
+          if(grupo!=='_sin_grupo'){
+            htmlTotal+=`<div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--text2);letter-spacing:1px;margin:14px 0 10px">GRUPO ${grupo}</div>`;
+          }
+          ps.forEach(p=>{
+            const ya=myProns[p.id];
+            const pts=PUNTOS_FASE[p.fase]||PUNTOS_FASE["Fase de grupos"];
+            const esElimP=FASES_ELIMINATORIAS.includes(p.fase);
+            const flag1p=p.equipo1.split(' ')[0];
+            const flag2p=p.equipo2.split(' ')[0];
+            const nom1p=p.equipo1.split(' ').slice(1).join(' ');
+            const nom2p=p.equipo2.split(' ').slice(1).join(' ');
+            const ganGuardado=ya?.ganador||'';
+            const ganadorSel=esElimP?`
+              <div style="margin-top:12px;padding:10px 12px;background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.2);border-radius:10px">
+                <div style="font-size:12px;color:var(--dorado);font-weight:700;margin-bottom:8px">⚽ Si hay empate en 90', ¿quién gana en penales?</div>
+                <div style="display:flex;gap:16px;flex-wrap:wrap">
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                    <input type="radio" name="ganador-${p.id}" id="gan1-${p.id}" value="equipo1" ${ganGuardado==='equipo1'?'checked':''}> ${flag1p} ${nom1p}
+                  </label>
+                  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px">
+                    <input type="radio" name="ganador-${p.id}" id="gan2-${p.id}" value="equipo2" ${ganGuardado==='equipo2'?'checked':''}> ${flag2p} ${nom2p}
+                  </label>
+                </div>
+              </div>`:'';
+            htmlTotal+=`<div class="prono-card">
+              <div class="prono-header">
+                <div>
+                  <div class="prono-match">${p.equipo1} vs ${p.equipo2}</div>
+                  <div style="font-size:11px;color:var(--text2);margin-top:3px">${formatDate(p.fecha)} · <span class="puntos-fase">+${pts.resultado} pts resultado / +${pts.marcador} pts exacto</span></div>
+                </div>
+              </div>
+              <div class="prono-score-row">
+                <div class="prono-team"><span class="prono-flag">${flag1p}</span><span>${nom1p}</span></div>
+                <input type="number" class="prono-input" id="g1-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles1:''}" placeholder="0">
+                <span class="prono-vs">—</span>
+                <input type="number" class="prono-input" id="g2-${p.id}" min="0" max="20" value="${ya!==undefined?ya.goles2:''}" placeholder="0">
+                <div class="prono-team"><span class="prono-flag">${flag2p}</span><span>${nom2p}</span></div>
+              </div>
+              ${ganadorSel}
+              <div style="margin-top:12px;display:flex;align-items:center;gap:10px">
+                <button class="btn btn-primary" onclick="guardarPronostico('${p.id}',${esElimP})">💾 ${ya!==undefined?'Actualizar':'Guardar'}</button>
+                ${ya!==undefined?'<span class="badge b-green">✓ Guardado</span>':''}
+              </div>
+            </div>`;
+          });
+        });
+      }
+      htmlTotal+=`</div>`;
+    }
+    listaEl.innerHTML=htmlTotal;
   }
 
   // Mis pronósticos guardados
