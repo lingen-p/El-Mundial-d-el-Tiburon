@@ -464,7 +464,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       </div>
 
       <div class="card" style="border-color:rgba(76,175,80,0.4)">
-        <div class="card-title">🆕 Corrección de puntos (24-jun, 48 partidos) <span class="admin-badge" style="background:#1565c0">USAR AHORA</span></div>
+        <div class="card-title">🆕 Corrección FINAL (lógica penales corregida) <span class="admin-badge" style="background:#1565c0">USAR AHORA</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Versión 2 — esta es la definitiva. Antes de aplicar, muestra en pantalla los valores actuales vs los correctos para que verifiques antes de confirmar.</p>
         <div style="background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.25);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#81c784">
           ℹ️ Usa este botón <strong>una sola vez</strong>. Después de aplicarlo, bórralo del código o no lo vuelvas a usar para no sobreescribir puntos futuros.
@@ -724,21 +724,29 @@ function calcularPuntos(p1,p2,r1,r2,fase,ganadorPron,ganadorReal){
   const pts=PUNTOS_FASE[fase]||PUNTOS_FASE["Fase de grupos"];
   const esElim=FASES_ELIMINATORIAS.includes(fase);
   let total=0;
-  if(esElim){
-    // CORRECCIÓN: el resultado se basa SOLO en los goles del tiempo reglamentario (90'+suplementario).
-    // Los penales NO afectan la puntuación — solo definen quién avanza.
-    // Resultado real en 90': victoria E1, empate, o victoria E2
-    const resR=r1>r2?1:r1<r2?-1:0;
-    // Resultado pronosticado en 90'
+  if(!esElim){
+    // Fase de grupos: resultado simple + marcador
     const resP=p1>p2?1:p1<p2?-1:0;
-    // Puntos por acertar el resultado (victoria/empate/derrota en 90')
+    const resR=r1>r2?1:r1<r2?-1:0;
     if(resP===resR)total+=pts.resultado;
-    // Puntos adicionales por marcador exacto en 90'
     if(p1===r1&&p2===r2)total+=pts.marcador;
   }else{
-    const resP=p1>p2?1:p1<p2?-1:0;
-    const resR=r1>r2?1:r1<r2?-1:0;
-    if(resP===resR)total+=pts.resultado;
+    if(p1!==p2){
+      // VICTORIA pronosticada: los penales NUNCA influyen
+      // Solo gana puntos si el mismo equipo ganó en 90' (sin empate)
+      const resPron=p1>p2?'e1':'e2';
+      if(r1!==r2){
+        const resReal=r1>r2?'e1':'e2';
+        if(resPron===resReal)total+=pts.resultado;
+      }
+      // Si el partido terminó empatado aunque haya penales: 0 pts resultado
+    }else{
+      // EMPATE pronosticado: los penales SÍ definen el resultado
+      // Gana puntos si: partido terminó empatado Y clasificó el mismo equipo
+      if(r1===r2&&ganadorPron&&ganadorReal&&ganadorPron===ganadorReal)
+        total+=pts.resultado;
+    }
+    // Marcador exacto: siempre basado en goles del tiempo reglamentario
     if(p1===r1&&p2===r2)total+=pts.marcador;
   }
   return total;
@@ -1645,7 +1653,7 @@ async function poblarSelectRecalc(){
   });
 }
 
-const VALORES_CORRECTOS_V2={"1cesnJdzq8X8xTp5LEXOQOVa02D2": {"puntos": 1110, "exactos": 10, "parciales": 36}, "4USNSD1igEMXE0JllkP2QBOovir1": {"puntos": 1200, "exactos": 9, "parciales": 40}, "4u54evJOtKdAP9BbZBYxwLG8Jbb2": {"puntos": 1240, "exactos": 8, "parciales": 41}, "BGRTp6veNQgliJOIkGCVMlBxTih2": {"puntos": 1300, "exactos": 7, "parciales": 44}, "DefLdNPOyYVtfnCbHQQLpltJKUc2": {"puntos": 1490, "exactos": 13, "parciales": 41}, "FPzZIxQMgIP4llaoR1ih75ZcIEQ2": {"puntos": 1190, "exactos": 9, "parciales": 43}, "JV8FIrzAQMgpBMGsGZ79K7YTR2X2": {"puntos": 1330, "exactos": 17, "parciales": 32}, "L1wOUFPXBbS3IStZtSNB0o9jLoS2": {"puntos": 1350, "exactos": 10, "parciales": 41}, "MRpvsruZ7Odk6f9f1DeIraBra0F3": {"puntos": 1470, "exactos": 10, "parciales": 44}, "YqQ0dI0O0Gh3Cz3F7mPkH3GEt6Y2": {"puntos": 1420, "exactos": 12, "parciales": 42}, "oLkTCYSyghU34dNz7B7R5xCjPjw2": {"puntos": 1120, "exactos": 9, "parciales": 36}};
+const VALORES_CORRECTOS_V2={"1cesnJdzq8X8xTp5LEXOQOVa02D2": {"puntos": 1180, "exactos": 10, "parciales": 39}, "4USNSD1igEMXE0JllkP2QBOovir1": {"puntos": 1270, "exactos": 9, "parciales": 43}, "4u54evJOtKdAP9BbZBYxwLG8Jbb2": {"puntos": 1290, "exactos": 8, "parciales": 44}, "BGRTp6veNQgliJOIkGCVMlBxTih2": {"puntos": 1370, "exactos": 7, "parciales": 47}, "DefLdNPOyYVtfnCbHQQLpltJKUc2": {"puntos": 1560, "exactos": 13, "parciales": 44}, "FPzZIxQMgIP4llaoR1ih75ZcIEQ2": {"puntos": 1280, "exactos": 9, "parciales": 46}, "JV8FIrzAQMgpBMGsGZ79K7YTR2X2": {"puntos": 1340, "exactos": 17, "parciales": 34}, "L1wOUFPXBbS3IStZtSNB0o9jLoS2": {"puntos": 1420, "exactos": 10, "parciales": 44}, "MRpvsruZ7Odk6f9f1DeIraBra0F3": {"puntos": 1520, "exactos": 10, "parciales": 47}, "YqQ0dI0O0Gh3Cz3F7mPkH3GEt6Y2": {"puntos": 1550, "exactos": 12, "parciales": 45}, "oLkTCYSyghU34dNz7B7R5xCjPjw2": {"puntos": 1160, "exactos": 9, "parciales": 38}};
 
 document.getElementById('fix-puntos-btn-v2').addEventListener('click',async()=>{
   if(!esAdmin())return;
