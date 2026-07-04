@@ -474,6 +474,16 @@ tr:hover td{background:rgba(255,255,255,0.02)}
       </div>
 
       <div class="card" style="border-color:rgba(156,39,176,0.35)">
+        <div class="card-title">🟣 Cargar Octavos de Final <span class="admin-badge" style="background:#6a1b9a">OCTAVOS</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga los 8 partidos de Octavos de Final. Solo agrega los que falten — no duplica los ya cargados.</p>
+        <div style="background:rgba(156,39,176,0.07);border:1px solid rgba(156,39,176,0.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#ce93d8">
+          ℹ️ Puntuación: <strong>30 pts por resultado + 30 pts por marcador exacto</strong> (máx 60 pts). Los penales NO afectan la puntuación.
+        </div>
+        <button class="btn btn-primary" id="seed-octavos-btn" style="background:#6a1b9a;border-color:#6a1b9a">🟣 Cargar partidos de Octavos de Final</button>
+        <div id="seed-octavos-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
+      <div class="card" style="border-color:rgba(156,39,176,0.35)">
         <div class="card-title">🗂 Confirmar Posiciones de Grupo <span class="admin-badge" style="background:#6a1b9a">+20 PTS C/U</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Cuando un grupo termine sus 6 partidos, confírmalo aquí para sumar <strong>+20 pts por cada posición acertada</strong> (hasta 80 pts por grupo) a cada jugador. Cada grupo solo se puede confirmar <strong>una vez</strong>.</p>
         <div id="grupos-confirmar-list" style="display:flex;flex-direction:column;gap:8px"></div>
@@ -587,6 +597,18 @@ const PARTIDOS_16AVOS=[
   {equipo1:"🇵🇹 Portugal",equipo2:"🇭🇷 Croacia",fecha:"2026-07-02T18:00:00",fase:"Dieciseisavos"},
   {equipo1:"🇨🇭 Suiza",equipo2:"🇩🇿 Argelia",fecha:"2026-07-02T22:00:00",fase:"Dieciseisavos"},
   {equipo1:"🇨🇴 Colombia",equipo2:"🇬🇭 Ghana",fecha:"2026-07-03T20:30:00",fase:"Dieciseisavos"},
+];
+
+// Octavos de final
+const PARTIDOS_OCTAVOS=[
+  {equipo1:"🇨🇦 Canadá",equipo2:"🇲🇦 Marruecos",fecha:"2026-07-04T11:00:00",fase:"Octavos de final"},
+  {equipo1:"🇵🇾 Paraguay",equipo2:"🇫🇷 Francia",fecha:"2026-07-04T15:00:00",fase:"Octavos de final"},
+  {equipo1:"🇧🇷 Brasil",equipo2:"🇳🇴 Noruega",fecha:"2026-07-05T14:00:00",fase:"Octavos de final"},
+  {equipo1:"🇲🇽 México",equipo2:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",fecha:"2026-07-05T18:00:00",fase:"Octavos de final"},
+  {equipo1:"🇵🇹 Portugal",equipo2:"🇪🇸 España",fecha:"2026-07-06T13:00:00",fase:"Octavos de final"},
+  {equipo1:"🇺🇸 Estados Unidos",equipo2:"🇧🇪 Bélgica",fecha:"2026-07-06T18:00:00",fase:"Octavos de final"},
+  {equipo1:"🇦🇷 Argentina",equipo2:"🇪🇬 Egipto",fecha:"2026-07-07T10:00:00",fase:"Octavos de final"},
+  {equipo1:"🇨🇭 Suiza",equipo2:"🇨🇴 Colombia",fecha:"2026-07-07T14:00:00",fase:"Octavos de final"},
 ];
 
 // 72 partidos: cada grupo juega 6 partidos (4 equipos: A-B, A-C, A-D, B-C, B-D, C-D)
@@ -703,10 +725,15 @@ function calcularPuntos(p1,p2,r1,r2,fase,ganadorPron,ganadorReal){
   const esElim=FASES_ELIMINATORIAS.includes(fase);
   let total=0;
   if(esElim){
-    // Ganador: si no hay empate se deduce del marcador, si hay empate se usa el campo ganador
-    const ganadorR=r1!==r2?(r1>r2?'equipo1':'equipo2'):ganadorReal;
-    const ganadorP=p1!==p2?(p1>p2?'equipo1':'equipo2'):ganadorPron;
-    if(ganadorP&&ganadorR&&ganadorP===ganadorR)total+=pts.resultado;
+    // CORRECCIÓN: el resultado se basa SOLO en los goles del tiempo reglamentario (90'+suplementario).
+    // Los penales NO afectan la puntuación — solo definen quién avanza.
+    // Resultado real en 90': victoria E1, empate, o victoria E2
+    const resR=r1>r2?1:r1<r2?-1:0;
+    // Resultado pronosticado en 90'
+    const resP=p1>p2?1:p1<p2?-1:0;
+    // Puntos por acertar el resultado (victoria/empate/derrota en 90')
+    if(resP===resR)total+=pts.resultado;
+    // Puntos adicionales por marcador exacto en 90'
     if(p1===r1&&p2===r2)total+=pts.marcador;
   }else{
     const resP=p1>p2?1:p1<p2?-1:0;
@@ -1950,6 +1977,47 @@ document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
     status.textContent=`✅ ${PARTIDOS_MUNDIAL.length} partidos del Mundial 2026 cargados correctamente.`;
     btn.textContent='✅ Ya cargados';
   }catch(e){showToast('Error: '+e.message,false);btn.disabled=false;btn.textContent='🌐 Cargar 72 partidos';}
+});
+
+document.getElementById('seed-octavos-btn').addEventListener('click',async()=>{
+  if(!esAdmin())return;
+  const btn=document.getElementById('seed-octavos-btn');
+  const status=document.getElementById('seed-octavos-status');
+  btn.disabled=true;btn.textContent='⏳ Verificando...';status.textContent='';
+  try{
+    const existing=await getDocs(query(collection(db,'partidos'),where('fase','==','Octavos de final')));
+    const existentes=new Set();
+    existing.forEach(d=>{const e=d.data();existentes.add(e.equipo1+'|'+e.equipo2);});
+    const faltantes=PARTIDOS_OCTAVOS.filter(p=>!existentes.has(p.equipo1+'|'+p.equipo2));
+    if(faltantes.length===0){
+      status.innerHTML=`<span style="color:#ff5252">⚠️ Los ${PARTIDOS_OCTAVOS.length} partidos de Octavos ya estaban cargados.</span>`;
+      btn.disabled=false;btn.textContent='🟣 Cargar partidos de Octavos de Final';
+      return;
+    }
+    btn.textContent='⏳ Cargando...';
+    let count=0;
+    for(const p of faltantes){
+      await addDoc(collection(db,'partidos'),{
+        equipo1:p.equipo1,equipo2:p.equipo2,
+        fecha:new Date(p.fecha),
+        fase:p.fase,grupo:null,jugado:false,
+        creado:serverTimestamp()
+      });
+      count++;
+      status.textContent=`Cargando... ${count}/${faltantes.length}`;
+    }
+    // Fecha límite: hoy a la 1:59 AM del día siguiente
+    const limite=new Date();limite.setDate(limite.getDate()+1);limite.setHours(1,59,0,0);
+    await setDoc(doc(db,'config','deadline_Octavos_de_final'),{fase:'Octavos de final',fecha:limite},{merge:true});
+    await loadFechasLimite();
+    const limiteStr=limite.toLocaleDateString('es-EC',{day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});
+    showToast(`✅ ${faltantes.length} partidos de Octavos cargados.`);
+    status.innerHTML=`<span style="color:#4caf50">✅ ${faltantes.length} partidos nuevos cargados. Fecha límite: ${limiteStr}.</span>`;
+    btn.textContent='✅ Listo';
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    btn.disabled=false;btn.textContent='🟣 Cargar partidos de Octavos de Final';
+  }
 });
 
 document.getElementById('seed-16avos-btn').addEventListener('click',async()=>{
