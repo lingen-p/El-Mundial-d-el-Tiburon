@@ -473,6 +473,16 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         <div id="fix-status-v2" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
       </div>
 
+      <div class="card" style="border-color:rgba(255,152,0,0.35)">
+        <div class="card-title">🟠 Cargar Cuartos de Final <span class="admin-badge" style="background:#e65100">CUARTOS</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga los 4 partidos de Cuartos de Final. Solo agrega los que falten — no duplica los ya cargados.</p>
+        <div style="background:rgba(255,152,0,0.07);border:1px solid rgba(255,152,0,0.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#ffb74d">
+          ℹ️ Puntuación: <strong>40 pts por resultado + 40 pts por marcador exacto</strong> (máx 80 pts). Los penales NO afectan la puntuación de resultado, salvo si pronosticaste empate.
+        </div>
+        <button class="btn btn-primary" id="seed-cuartos-btn" style="background:#e65100;border-color:#e65100">🟠 Cargar partidos de Cuartos de Final</button>
+        <div id="seed-cuartos-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
       <div class="card" style="border-color:rgba(156,39,176,0.35)">
         <div class="card-title">🟣 Cargar Octavos de Final <span class="admin-badge" style="background:#6a1b9a">OCTAVOS</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga los 8 partidos de Octavos de Final. Solo agrega los que falten — no duplica los ya cargados.</p>
@@ -609,6 +619,14 @@ const PARTIDOS_OCTAVOS=[
   {equipo1:"🇺🇸 Estados Unidos",equipo2:"🇧🇪 Bélgica",fecha:"2026-07-06T18:00:00",fase:"Octavos de final"},
   {equipo1:"🇦🇷 Argentina",equipo2:"🇪🇬 Egipto",fecha:"2026-07-07T10:00:00",fase:"Octavos de final"},
   {equipo1:"🇨🇭 Suiza",equipo2:"🇨🇴 Colombia",fecha:"2026-07-07T14:00:00",fase:"Octavos de final"},
+];
+
+// Cuartos de final
+const PARTIDOS_CUARTOS=[
+  {equipo1:"🇫🇷 Francia",equipo2:"🇲🇦 Marruecos",fecha:"2026-07-09T15:00:00",fase:"Cuartos de final"},
+  {equipo1:"🇪🇸 España",equipo2:"🇧🇪 Bélgica",fecha:"2026-07-10T14:00:00",fase:"Cuartos de final"},
+  {equipo1:"🇳🇴 Noruega",equipo2:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",fecha:"2026-07-11T16:00:00",fase:"Cuartos de final"},
+  {equipo1:"🇦🇷 Argentina",equipo2:"🇨🇭 Suiza",fecha:"2026-07-11T20:00:00",fase:"Cuartos de final"},
 ];
 
 // 72 partidos: cada grupo juega 6 partidos (4 equipos: A-B, A-C, A-D, B-C, B-D, C-D)
@@ -1985,6 +2003,47 @@ document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
     status.textContent=`✅ ${PARTIDOS_MUNDIAL.length} partidos del Mundial 2026 cargados correctamente.`;
     btn.textContent='✅ Ya cargados';
   }catch(e){showToast('Error: '+e.message,false);btn.disabled=false;btn.textContent='🌐 Cargar 72 partidos';}
+});
+
+document.getElementById('seed-cuartos-btn').addEventListener('click',async()=>{
+  if(!esAdmin())return;
+  const btn=document.getElementById('seed-cuartos-btn');
+  const status=document.getElementById('seed-cuartos-status');
+  btn.disabled=true;btn.textContent='⏳ Verificando...';status.textContent='';
+  try{
+    const existing=await getDocs(query(collection(db,'partidos'),where('fase','==','Cuartos de final')));
+    const existentes=new Set();
+    existing.forEach(d=>{const e=d.data();existentes.add(e.equipo1+'|'+e.equipo2);});
+    const faltantes=PARTIDOS_CUARTOS.filter(p=>!existentes.has(p.equipo1+'|'+p.equipo2));
+    if(faltantes.length===0){
+      status.innerHTML=`<span style="color:#ff5252">⚠️ Los ${PARTIDOS_CUARTOS.length} partidos de Cuartos ya estaban cargados.</span>`;
+      btn.disabled=false;btn.textContent='🟠 Cargar partidos de Cuartos de Final';
+      return;
+    }
+    btn.textContent='⏳ Cargando...';
+    let count=0;
+    for(const p of faltantes){
+      await addDoc(collection(db,'partidos'),{
+        equipo1:p.equipo1,equipo2:p.equipo2,
+        fecha:new Date(p.fecha),
+        fase:p.fase,grupo:null,jugado:false,
+        creado:serverTimestamp()
+      });
+      count++;
+      status.textContent=`Cargando... ${count}/${faltantes.length}`;
+    }
+    // Fecha límite: mañana 1:59 AM hora Ecuador
+    const limite=new Date();limite.setDate(limite.getDate()+1);limite.setHours(1,59,0,0);
+    await setDoc(doc(db,'config','deadline_Cuartos_de_final'),{fase:'Cuartos de final',fecha:limite},{merge:true});
+    await loadFechasLimite();
+    const limiteStr=limite.toLocaleDateString('es-EC',{day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});
+    showToast(`✅ ${faltantes.length} partidos de Cuartos cargados.`);
+    status.innerHTML=`<span style="color:#4caf50">✅ ${faltantes.length} partidos cargados. Fecha límite: ${limiteStr}.</span>`;
+    btn.textContent='✅ Listo';
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    btn.disabled=false;btn.textContent='🟠 Cargar partidos de Cuartos de Final';
+  }
 });
 
 document.getElementById('seed-octavos-btn').addEventListener('click',async()=>{
