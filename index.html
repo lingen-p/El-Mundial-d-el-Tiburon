@@ -473,6 +473,16 @@ tr:hover td{background:rgba(255,255,255,0.02)}
         <div id="fix-status-v2" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
       </div>
 
+      <div class="card" style="border-color:rgba(255,214,0,0.5);background:rgba(255,214,0,0.03)">
+        <div class="card-title">🏆 Cargar 3er puesto y Final <span class="admin-badge" style="background:#b8860b">FINAL</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga el partido por el 3er puesto y la Final del Mundial.</p>
+        <div style="background:rgba(255,214,0,0.07);border:1px solid rgba(255,214,0,0.25);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:var(--dorado)">
+          ℹ️ Ambos partidos valen <strong>60+60 pts</strong> (fase Final). Los penales solo aplican si pronosticaste empate.
+        </div>
+        <button class="btn btn-primary" id="seed-final-btn">🏆 Cargar 3er puesto y Final</button>
+        <div id="seed-final-status" style="margin-top:10px;font-size:13px;color:var(--text2)"></div>
+      </div>
+
       <div class="card" style="border-color:rgba(244,67,54,0.35)">
         <div class="card-title">🔴 Cargar Semifinales <span class="admin-badge" style="background:#b71c1c">SEMIS</span></div>
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">Carga los 2 partidos de Semifinales. Solo agrega los que falten — no duplica los ya cargados.</p>
@@ -643,6 +653,12 @@ const PARTIDOS_CUARTOS=[
 const PARTIDOS_SEMIS=[
   {equipo1:"🇫🇷 Francia",equipo2:"🇪🇸 España",fecha:"2026-07-14T14:00:00",fase:"Semifinal"},
   {equipo1:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",equipo2:"🇦🇷 Argentina",fecha:"2026-07-15T14:00:00",fase:"Semifinal"},
+];
+
+// Tercer puesto y Final
+const PARTIDOS_FINAL=[
+  {equipo1:"🇫🇷 Francia",equipo2:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra",fecha:"2026-07-18T14:00:00",fase:"Final"},
+  {equipo1:"🇪🇸 España",equipo2:"🇦🇷 Argentina",fecha:"2026-07-19T14:00:00",fase:"Final"},
 ];
 
 // 72 partidos: cada grupo juega 6 partidos (4 equipos: A-B, A-C, A-D, B-C, B-D, C-D)
@@ -2019,6 +2035,47 @@ document.getElementById('seed-partidos-btn').addEventListener('click',async()=>{
     status.textContent=`✅ ${PARTIDOS_MUNDIAL.length} partidos del Mundial 2026 cargados correctamente.`;
     btn.textContent='✅ Ya cargados';
   }catch(e){showToast('Error: '+e.message,false);btn.disabled=false;btn.textContent='🌐 Cargar 72 partidos';}
+});
+
+document.getElementById('seed-final-btn').addEventListener('click',async()=>{
+  if(!esAdmin())return;
+  const btn=document.getElementById('seed-final-btn');
+  const status=document.getElementById('seed-final-status');
+  btn.disabled=true;btn.textContent='⏳ Verificando...';status.textContent='';
+  try{
+    const snapSemi=await getDocs(query(collection(db,'partidos'),where('fase','==','Semifinal')));
+    const snapFinal=await getDocs(query(collection(db,'partidos'),where('fase','==','Final')));
+    const existentes=new Set();
+    snapSemi.forEach(d=>{const e=d.data();existentes.add(e.equipo1+'|'+e.equipo2);});
+    snapFinal.forEach(d=>{const e=d.data();existentes.add(e.equipo1+'|'+e.equipo2);});
+    const faltantes=PARTIDOS_FINAL.filter(p=>!existentes.has(p.equipo1+'|'+p.equipo2));
+    if(faltantes.length===0){
+      status.innerHTML=`<span style="color:#ff5252">⚠️ Los partidos ya estaban cargados.</span>`;
+      btn.disabled=false;btn.textContent='🏆 Cargar 3er puesto y Final';
+      return;
+    }
+    btn.textContent='⏳ Cargando...';
+    for(const p of faltantes){
+      await addDoc(collection(db,'partidos'),{
+        equipo1:p.equipo1,equipo2:p.equipo2,
+        fecha:new Date(p.fecha),
+        fase:p.fase,grupo:null,jugado:false,
+        creado:serverTimestamp()
+      });
+    }
+    // Fecha límite: mañana 1:59 AM
+    const limite=new Date();limite.setDate(limite.getDate()+1);limite.setHours(1,59,0,0);
+    await setDoc(doc(db,'config','deadline_Semifinal'),{fase:'Semifinal',fecha:limite},{merge:true});
+    await setDoc(doc(db,'config','deadline_Final'),{fase:'Final',fecha:limite},{merge:true});
+    await loadFechasLimite();
+    const limiteStr=limite.toLocaleDateString('es-EC',{day:'2-digit',month:'long',hour:'2-digit',minute:'2-digit'});
+    showToast(`✅ ${faltantes.length} partidos cargados.`);
+    status.innerHTML=`<span style="color:#4caf50">✅ ${faltantes.length} partidos cargados. Fecha límite: ${limiteStr}.</span>`;
+    btn.textContent='✅ Listo';
+  }catch(e){
+    showToast('Error: '+e.message,false);
+    btn.disabled=false;btn.textContent='🏆 Cargar 3er puesto y Final';
+  }
 });
 
 document.getElementById('seed-semis-btn').addEventListener('click',async()=>{
